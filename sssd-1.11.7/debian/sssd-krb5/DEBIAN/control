@@ -1,0 +1,15 @@
+Package: sssd-krb5
+Source: sssd
+Version: 1.11.7-3
+Architecture: amd64
+Maintainer: Debian SSSD Team <pkg-sssd-devel@lists.alioth.debian.org>
+Installed-Size: 97
+Depends: sssd-common (= 1.11.7-3), sssd-krb5-common (= 1.11.7-3), libc6 (>= 2.4), libcomerr2 (>= 1.01), libdhash1 (>= 0.4.0), libk5crypto3 (>= 1.6.dfsg.2), libkrb5-3 (>= 1.10.2+dfsg)
+Breaks: sssd (<< 1.10.0~beta2-1)
+Replaces: sssd (<< 1.10.0~beta2-1)
+Section: utils
+Priority: extra
+Homepage: https://fedorahosted.org/sssd/
+Description: System Security Services Daemon -- Kerberos back end
+ Provides the Kerberos back end that the SSSD can utilize authenticate
+ against a Kerberos server.

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE reference PUBLIC "-//OASIS//DTD DocBook V4.4//EN"
+"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<reference>
+<title>Сторінки підручника SSSD</title>
+<refentry>
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/upstream.xml" />
+
+    <refmeta>
+        <refentrytitle>sss_ssh_authorizedkeys</refentrytitle>
+        <manvolnum>1</manvolnum>
+    </refmeta>
+
+    <refnamediv id='name'>
+        <refname>sss_ssh_authorizedkeys</refname>
+        <refpurpose>отримати уповноважені ключі OpenSSH</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv id='synopsis'>
+        <cmdsynopsis>
+<command>sss_ssh_authorizedkeys</command> <arg choice='opt'>
+<replaceable>параметри</replaceable> </arg> <arg
+choice='plain'><replaceable>КОРИСТУВАЧ</replaceable></arg></cmdsynopsis>
+    </refsynopsisdiv>
+
+    <refsect1 id='description'>
+        <title>ОПИС</title>
+        <para>
+            <command>sss_ssh_authorizedkeys</command> отримує відкриті ключі SSH для
+користувача <replaceable>КОРИСТУВАЧ</replaceable> і виводить їх у форматі
+authorized_keys OpenSSH (щоб дізнатися більше, див. розділ <quote>ФОРМАТ
+ФАЙЛІВ AUTHORIZED_KEYS</quote> на сторінці підручника (man) з
+<citerefentry><refentrytitle>sshd</refentrytitle>
+<manvolnum>8</manvolnum></citerefentry>).
+        </para>
+        <para>
+            <citerefentry><refentrytitle>sshd</refentrytitle>
+<manvolnum>8</manvolnum></citerefentry> можна налаштувати на використання
+<command>sss_ssh_authorizedkeys</command> для розпізнавання користувачів за
+відкритими ключами, якщо програму зібрано з підтримкою параметра
+<citerefentry> <refentrytitle>sshd_config</refentrytitle>
+<manvolnum>5</manvolnum></citerefentry> <quote>AuthorizedKeysCommand</quote>
+або <quote>PubkeyAgent</quote>.
+        </para>
+        <para>
+            Якщо передбачено підтримку <quote>AuthorizedKeysCommand</quote>,
+<citerefentry><refentrytitle>sshd</refentrytitle>
+<manvolnum>8</manvolnum></citerefentry> можна налаштувати на використання
+ключів за допомогою такої інструкції у <citerefentry>
+<refentrytitle>sshd_config</refentrytitle>
+<manvolnum>5</manvolnum></citerefentry>: <programlisting>
+AuthorizedKeysCommand /usr/bin/sss_ssh_authorizedkeys
+</programlisting>
+        </para>
+        <para>
+            Якщо передбачено підтримку <quote>PubkeyAgent</quote>,
+<citerefentry><refentrytitle>sshd</refentrytitle>
+<manvolnum>8</manvolnum></citerefentry> може бути налаштовано на
+використання ключів за допомогою такої інструкції <citerefentry>
+<refentrytitle>sshd</refentrytitle> <manvolnum>8</manvolnum></citerefentry>:
+<programlisting>
+PubKeyAgent /usr/bin/sss_ssh_authorizedkeys %u
+</programlisting>
+        </para>
+    </refsect1>
+
+    <refsect1 id='options'>
+        <title>ПАРАМЕТРИ</title>
+        <variablelist remap='IP'>
+            <varlistentry>
+                <term>
+                    <option>-d</option>,<option>--domain</option>
+<replaceable>ДОМЕН</replaceable>
+                </term>
+                <listitem>
+                    <para>
+                        Шукати відкриті ключі користувачів у домені SSSD
+<replaceable>ДОМЕН</replaceable>.
+                    </para>
+                </listitem>
+            </varlistentry>
+            <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/param_help.xml" />
+        </variablelist>
+    </refsect1>
+
+    <refsect1 id='exit_status'>
+        <title>СТАН ВИХОДУ</title>
+        <para>
+            У випадку успіху значення стану виходу дорівнює 0. У всіх інших випадках
+програма повертає 1.
+        </para>
+    </refsect1>
+
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/seealso.xml" />
+
+</refentry>
+</reference>

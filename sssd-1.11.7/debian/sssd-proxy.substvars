@@ -1,0 +1,3 @@
+misc:Pre-Depends=multiarch-support
+shlibs:Depends=libbasicobjects0 (>= 0.4.0), libc6 (>= 2.14), libcollection4 (>= 0.4.0), libdbus-1-3 (>= 1.0.2), libdhash1 (>= 0.4.0), libini-config5 (>= 0.4.0), libldap-2.4-2 (>= 2.4.7), libldb1 (>= 0.9.21), libnspr4 (>= 2:4.9-2~), libnss3 (>= 2:3.13.4-2~), libpam0g (>= 0.99.7.1), libpcre3 (>= 1:8.35), libpopt0 (>= 1.14), libref-array1 (>= 0.4.0), libtalloc2 (>= 2.0.4~git20101213), libtdb1 (>= 1.1.2~git20080520), libtevent0 (>= 0.9.9)
+misc:Depends=

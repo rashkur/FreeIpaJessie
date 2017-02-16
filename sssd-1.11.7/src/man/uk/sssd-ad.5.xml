@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE reference PUBLIC "-//OASIS//DTD DocBook V4.4//EN"
+"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<reference>
+<title>Сторінки підручника SSSD</title>
+<refentry>
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/upstream.xml" />
+
+    <refmeta>
+        <refentrytitle>sssd-ad</refentrytitle>
+        <manvolnum>5</manvolnum>
+        <refmiscinfo class="manual">Формати файлів та правила</refmiscinfo>
+    </refmeta>
+
+    <refnamediv id='name'>
+        <refname>sssd-ad</refname>
+        <refpurpose>файл налаштування SSSD</refpurpose>
+    </refnamediv>
+
+    <refsect1 id='description'>
+        <title>ОПИС</title>
+        <para>
+            На цій сторінці довідника описано налаштування засобу керування доступом AD
+для <citerefentry> <refentrytitle>sssd</refentrytitle>
+<manvolnum>8</manvolnum> </citerefentry>. Щоб дізнатися більше про синтаксис
+налаштування, зверніться до розділу «ФОРМАТ ФАЙЛІВ» сторінки довідника
+<citerefentry> <refentrytitle>sssd.conf</refentrytitle>
+<manvolnum>5</manvolnum> </citerefentry>.
+        </para>
+        <para>
+            Засіб надання даних AD — це модуль, що використовується для встановлення
+з’єднання з сервером Active Directory. Цей засіб потребує долучення
+комп’ютера до домену AD та доступності таблиці ключів.
+        </para>
+        <para>
+            У засобі надання даних AD передбачено підтримку встановлення з’єднання з
+Active Directory 2008 R2 або пізнішою версією. Робота з попередніми версіями
+можлива, але не підтримується.
+        </para>
+        <para>
+            Модуль надання даних AD може надавати дані щодо ідентифікації та
+розпізнавання і для записів з надійних доменів. У поточній версії
+розпізнаються лише надійні домени з одного лісу.
+        </para>
+        <para>
+            Інструментом надання даних AD використовуються ті самі параметри, що
+використовуються надавачем даних профілів <citerefentry>
+<refentrytitle>sssd-ldap</refentrytitle> <manvolnum>5</manvolnum>
+</citerefentry> та надавачем даних для розпізнавання <citerefentry>
+<refentrytitle>sssd-krb5</refentrytitle> <manvolnum>5</manvolnum>
+</citerefentry> з певними винятками, описаними нижче.
+        </para>
+        <para>
+            Потреби у встановленні або використанні цих параметрів виникнути не
+повинно. Інструментом надання даних AD також можна скористатися для
+перевірки прав доступу, зміни паролів та доступу до sudo. У налаштовуванні
+керування доступом на боці клієнта немає потреби.
+        </para>
+        <para>
+            Типово, модуль надання даних AD виконуватиме прив’язку до значень UID та GID
+з параметра objectSID у Active Directory. Докладніший опис наведено у
+розділі «ВСТАНОВЛЕННЯ ВІДПОВІДНОСТІ ІДЕНТИФІКАТОРІВ». Якщо вам потрібно
+вимкнути встановлення відповідності ідентифікаторів і покладатися на
+атрибути POSIX, визначені у Active Directory, вам слід встановити
+<programlisting>
+ldap_id_mapping = False
+            </programlisting> Щоб отримати дані щодо
+користувачів і груп за допомогою атрибутів POSIX з надійних доменів,
+адміністратор AD має переконатися, що атрибути POSIX відтворюються у
+загальному каталозі (Global Catalog).
+        </para>
+        <para>
+            Дані щодо користувачів, груп та інших записів, які обслуговуються SSSD, у
+модулі надання даних AD завжди обробляються із врахуванням регістру символів
+для забезпечення сумісності з реалізацією Active Directory у LDAP.
+        </para>
+    </refsect1>
+
+    <refsect1 id='file-format'>
+        <title>ПАРАМЕТРИ НАЛАШТУВАННЯ</title>
+        <para>Зверніться до розділу «РОЗДІЛИ ДОМЕНІВ» сторінки довідника (man)
+<citerefentry> <refentrytitle>sssd.conf</refentrytitle>
+<manvolnum>5</manvolnum> </citerefentry>, щоб дізнатися більше про
+налаштування домену SSSD. <variablelist>
+                <varlistentry>
+                    <term>ad_domain (рядок)</term>
+                    <listitem>
+                        <para>
+                            Визначає назву домену Active Directory. Є необов’язковим. Якщо не вказано,
+буде використано назву домену з налаштувань.
+                        </para>
+                        <para>
+                            Для забезпечення належної роботи цей параметр слід вказати у форматі запису
+малими літерами повної версії назви домену Active Directory.
+                        </para>
+                        <para>
+                            Скорочена назва домену (також відома як назва NetBIOS або проста назва)
+автоматично визначається засобами SSSD.
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>ad_server, ad_backup_server (рядок)</term>
+                    <listitem>
+                        <para>
+                            Впорядкований за пріоритетом список назв вузлів, відокремлених комами,
+серверів AD, з якими має встановити з’єднання SSSD. Докладніші відомості
+щодо резервних серверів викладено у розділі «РЕЗЕРВ». Цей список є
+необов’язковим, якщо увімкнено автоматичне виявлення служб. Докладніші
+відомості щодо автоматичного виявлення служб наведено у розділі «ПОШУК
+СЛУЖБ».
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>ad_hostname (рядок)</term>
+                    <listitem>
+                        <para>
+                            Необов’язковий. Може бути встановлено на комп’ютерах, де hostname(5) не
+відповідає повній назві, що використовується доменом Active Directory для
+розпізнавання цього вузла.
+                        </para>
+                        <para>
+                            Це поле використовується для визначення основної назви вузла, яка
+використовуватиметься у таблиці ключів. Ця назва має відповідати назві
+вузла, для якого випущено таблицю ключів.
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>ad_enable_dns_sites (булеве значення)</term>
+                    <listitem>
+                        <para>
+                            Вмикає сайти DNS — визначення служб на основі адрес.
+                        </para>
+                        <para>
+                            Якщо вказано значення true і увімкнено визначення служб (див. розділ щодо
+пошуку служб у нижній частині сторінки підручника (man)), SSSD спочатку
+спробує визначити сервер Active Directory для встановлення з’єднання на
+основі використання визначення сайтів Active Directory і повертається до
+визначення за записами SRV DNS, якщо сайт AD не буде знайдено. Налаштування
+SRV DNS, зокрема домен пошуку, використовуються також під час визначення
+сайтів.
+                        </para>
+                        <para>
+                            Типове значення: true
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>ad_access_filter (boolean)</term>
+                    <listitem>
+                        <para>
+                            Цей параметр визначає фільтр керування доступом LDAP, якому має відповідати
+запис користувача для того, щоб йому було надано доступ. Будь ласка,
+зауважте, що слід явним чином встановити для параметра «access_provider»
+значення «ad», щоб цей параметр почав діяти.
+                        </para>
+                        <para>
+                            У параметрі також передбачено підтримку визначення різних фільтрів для
+окремих доменів або дерев. Цей розширений фільтр повинен мати такий формат:
+«КЛЮЧОВЕ СЛОВО:НАЗВА:ФІЛЬТР». Набір підтримуваних ключових слів: «DOM»,
+«FOREST» або ключове слово слід пропустити.
+                        </para>
+                        <para>
+                            Якщо вказано ключове слово «DOM» або ключового слова не вказано, «НАЗВА»
+визначає домен або піддомен, до якого застосовується фільтрування. Якщо
+ключовим словом є «FOREST», фільтр застосовується до усіх доменів з лісу,
+вказаного значенням «НАЗВА».
+                        </para>
+                        <para>
+                            Декілька фільтрів можна відокремити символом «?», подібно до способу
+визначення фільтрів у базах для пошуку.
+                        </para>
+                        <para>
+                            Завжди використовується відповідник з найвищим рівнем
+відповідності. Наприклад, якщо визначено фільтрування для домену, учасником
+якого є користувач, і загальне фільтрування, буде використано фільтрування
+для окремого домену. Якщо буде виявлено декілька відповідників з однаковою
+специфікацією, використовуватиметься лише перший з них.
+                        </para>
+                        <para>
+                            Приклади:
+                        </para>
+                        <programlisting>
+# застосувати фільтрування лише для домену з назвою dom1:
+dom1:(memberOf=cn=admins,ou=groups,dc=dom1,dc=com)
+
+# застосувати фільтрування лише для домену з назвою dom2:
+DOM:dom2:(memberOf=cn=admins,ou=groups,dc=dom2,dc=com)
+
+# застосувати фільтрування лише для лісу з назвою EXAMPLE.COM:
+FOREST:EXAMPLE.COM:(memberOf=cn=admins,ou=groups,dc=example,dc=com)
+                        </programlisting>
+                        <para>
+                            Типове значення: не встановлено
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>ad_enable_gc (булеве значення)</term>
+                    <listitem>
+                        <para>
+                            Типово, SSSD для отримання даних користувачів з надійних (довірених) доменів
+спочатку встановлює з’єднання із загальним каталогом (Global Catalog). Якщо
+ж отримати дані не вдасться, система використовує порт LDAP для отримання
+даних щодо участі у групах. Вимикання цього параметра призведе до того, що
+SSSD встановлюватиме зв’язок лише з портом LDAP поточного сервера AD.
+                        </para>
+                        <para>
+                            Будь ласка, зауважте, що вимикання підтримки загального каталогу (Global
+Catalog) не призведе до вимикання спроб отримати дані користувачів з
+надійних (довірених) доменів. Просто SSSD намагатиметься отримати ці ж дані
+за допомогою порту LDAP надійних доменів. Втім, загальним каталогом (Global
+Catalog) доведеться скористатися для визначення зв’язків даних щодо участі у
+групах для різних доменів.
+                        </para>
+                        <para>
+                            Типове значення: true
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>dyndns_update (булеве значення)</term>
+                    <listitem>
+                        <para>
+                            Необов’язковий. За допомогою цього параметра можна наказати SSSD автоматично
+оновити IP-адресу цього клієнта на сервері DNS Active Directory. Захист
+оновлення буде забезпечено за допомогою GSS-TSIG. Як наслідок,
+адміністраторові Active Directory достатньо буде дозволити оновлення безпеки
+для зони DNS. Для оновлення буде використано IP-адресу з’єднання LDAP AD,
+якщо цю адресу не було змінено за допомогою параметра «dyndns_iface».
+                        </para>
+                        <para>
+                            ЗАУВАЖЕННЯ: на застарілих системах (зокрема RHEL 5) для надійної роботи у
+цьому режимі типову область дії Kerberos має бути належним чином визначено у
+/etc/krb5.conf
+                        </para>
+                        <para>
+                            Типове значення: true
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>dyndns_ttl (ціле число)</term>
+                    <listitem>
+                        <para>
+                            TTL, до якого буде застосовано клієнтський запис DNS під час його
+оновлення. Якщо dyndns_update має значення false, цей параметр буде
+проігноровано. Перевизначає TTL на боці сервера, якщо встановлено
+адміністратором.
+                        </para>
+                        <para>
+                            Типове значення: 3600 (секунд)
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>dyndns_iface (рядок)</term>
+                    <listitem>
+                        <para>
+                            Необов’язковий. Застосовний лише тоді, коли dyndns_update має значення
+true. Визначити інтерфейс, чию адресу IP має бути використано для динамічних
+оновлень DNS.
+                        </para>
+                        <para>
+                            Типове значення: використовувати IP-адресу з’єднання LDAP AD
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>dyndns_refresh_interval (ціле число)</term>
+                    <listitem>
+                        <para>
+                            Визначає, наскільки часто серверний модуль має виконувати періодичні
+оновлення DNS на додачу до автоматичного оновлення, яке виконується під час
+кожного встановлення з’єднання серверного модуля з мережею. Цей параметр не
+є обов’язкоми, його застосовують, лише якщо dyndns_update має значення true.
+                        </para>
+                        <para>
+                            Типове значення: 86400 (24 години)
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>dyndns_update_ptr (булеве значення)</term>
+                    <listitem>
+                        <para>
+                            Визначає, чи слід явним чином оновлювати запис PTR під час оновлення записів
+DNS клієнта. Застосовується, лише якщо значенням dyndns_update буде true.
+                        </para>
+                        <para>
+                            Типове значення: True
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>dyndns_force_tcp (булеве значення)</term>
+                    <listitem>
+                        <para>
+                            Визначає, чи слід у програмі nsupdate типово використовувати TCP для обміну
+даними з сервером DNS.
+                        </para>
+                        <para>
+                            Типове значення: False (надати змогу nsupdate вибирати протокол)
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/override_homedir.xml" />
+                <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/homedir_substring.xml" />
+
+                <varlistentry>
+                    <term>krb5_use_enterprise_principal (булеве значення)</term>
+                    <listitem>
+                        <para>
+                            Визначає, чи слід вважати реєстраційні дані користувача даними промислового
+рівня. Див. розділ 5 RFC 6806, щоб дізнатися більше про промислові
+реєстраційні дані.
+                        </para>
+
+                        <para>
+                            Типове значення: true
+                        </para>
+                        <para>
+                             Зауважте, що це типове значення не збігається з типовим значенням засобу
+модуля Kerberos.
+                        </para>
+                    </listitem>
+                </varlistentry>
+            </variablelist>
+        </para>
+    </refsect1>
+
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/failover.xml" />
+
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/service_discovery.xml" />
+
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/ldap_id_mapping.xml" />
+
+    <refsect1 id='example'>
+        <title>ПРИКЛАД</title>
+        <para>
+            У наведеному нижче прикладі припускаємо, що SSSD налаштовано належним чином,
+а example.com є одним з доменів у розділі
+<replaceable>[sssd]</replaceable>. У прикладі продемонстровано лише
+параметри доступу, специфічні для засобу AD.
+        </para>
+        <para>
+<programlisting>
+[domain/EXAMPLE]
+id_provider = ad
+auth_provider = ad
+access_provider = ad
+chpass_provider = ad
+
+ad_server = dc1.example.com
+ad_hostname = client.example.com
+ad_domain = example.com
+</programlisting>
+        </para>
+    </refsect1>
+
+    <refsect1 id='notes'>
+        <title>ЗАУВАЖЕННЯ</title>
+        <para>
+            Інструмент керування доступом AD перевіряє, чи не завершено строк дії
+облікового запису. Дає той самий результат, що і ось таке налаштовування
+інструмента надання даних LDAP: <programlisting>
+access_provider = ldap
+ldap_access_order = expire
+ldap_account_expire_policy = ad
+</programlisting>
+        </para>
+        <para>
+            Втім, якщо інструмент керування наданням доступу «ad» не налаштовано явно,
+типовим інструментом надання доступу є «permit».
+        </para>
+    </refsect1>
+
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/seealso.xml" />
+
+</refentry>
+</reference>

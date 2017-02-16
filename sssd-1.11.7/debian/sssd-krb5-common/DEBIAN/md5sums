@@ -1,0 +1,5 @@
+4536ec6b2bf687bb85e3d39cd54eca87  usr/lib/x86_64-linux-gnu/sssd/krb5_child
+b60c555e23935f533591b5e7d334a88c  usr/lib/x86_64-linux-gnu/sssd/ldap_child
+24548109a2457da456bc7f495e2aba6f  usr/lib/x86_64-linux-gnu/sssd/libsss_krb5_common.so
+33be9ae4ebbd14406771d7d5dc552c46  usr/share/doc/sssd-krb5-common/changelog.Debian.gz
+13a01f8bcb4a56e1df65e43e01444c07  usr/share/doc/sssd-krb5-common/copyright

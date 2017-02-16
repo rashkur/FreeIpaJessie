@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE reference PUBLIC "-//OASIS//DTD DocBook V4.4//EN"
+"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<reference>
+<title>SSSD マニュアル ページ</title>
+<refentry>
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/upstream.xml" />
+
+    <refmeta>
+        <refentrytitle>sss_ssh_authorizedkeys</refentrytitle>
+        <manvolnum>1</manvolnum>
+    </refmeta>
+
+    <refnamediv id='name'>
+        <refname>sss_ssh_authorizedkeys</refname>
+        <refpurpose>OpenSSH 認可キーを取得する</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv id='synopsis'>
+        <cmdsynopsis>
+<command>sss_ssh_authorizedkeys</command> <arg choice='opt'>
+<replaceable>options</replaceable> </arg> <arg
+choice='plain'><replaceable>USER</replaceable></arg></cmdsynopsis>
+    </refsynopsisdiv>
+
+    <refsect1 id='description'>
+        <title>概要</title>
+        <para>
+            <command>sss_ssh_authorizedkeys</command> はユーザー
+<replaceable>USER</replaceable> の SSH 公開鍵を取得して、 OpenSSH authorized_keys
+形式に出力します (詳細は <citerefentry><refentrytitle>sshd</refentrytitle>
+<manvolnum>8</manvolnum></citerefentry> の <quote>AUTHORIZED_KEYS FILE
+FORMAT</quote> セクションを参照してください)。
+        </para>
+        <para>
+            <citerefentry><refentrytitle>sshd</refentrytitle>
+<manvolnum>8</manvolnum></citerefentry> は、
+<quote>AuthorizedKeysCommand</quote> または <quote>PubkeyAgent</quote>
+<citerefentry> <refentrytitle>sshd_config</refentrytitle>
+<manvolnum>5</manvolnum></citerefentry>
+オプションのサポート付きでコンパイルされていると、公開鍵ユーザー認証のために
+<command>sss_ssh_authorizedkeys</command> を使用するために設定できます。
+        </para>
+        <para>
+            <quote>AuthorizedKeysCommand</quote> がサポートされていると、
+<citerefentry><refentrytitle>sshd</refentrytitle>
+<manvolnum>8</manvolnum></citerefentry> は <citerefentry>
+<refentrytitle>sshd_config</refentrytitle>
+<manvolnum>5</manvolnum></citerefentry>
+に以下のディレクティブを置くことにより、これを使用するために設定できます: <programlisting>
+AuthorizedKeysCommand /usr/bin/sss_ssh_authorizedkeys
+</programlisting>
+        </para>
+        <para>
+            <quote>PubkeyAgent</quote> がサポートされていると、
+<citerefentry><refentrytitle>sshd</refentrytitle>
+<manvolnum>8</manvolnum></citerefentry> は  <citerefentry>
+<refentrytitle>sshd</refentrytitle> <manvolnum>8</manvolnum></citerefentry>
+設定に以下のディレクティブを置くことにより、これを使用するために設定できます: <programlisting>
+PubKeyAgent /usr/bin/sss_ssh_authorizedkeys %u
+</programlisting>
+        </para>
+    </refsect1>
+
+    <refsect1 id='options'>
+        <title>オプション</title>
+        <variablelist remap='IP'>
+            <varlistentry>
+                <term>
+                    <option>-d</option>,<option>--domain</option>
+<replaceable>DOMAIN</replaceable>
+                </term>
+                <listitem>
+                    <para>
+                        SSSD ドメイン <replaceable>DOMAIN</replaceable> にあるユーザーの公開鍵を検索します。
+                    </para>
+                </listitem>
+            </varlistentry>
+            <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/param_help.xml" />
+        </variablelist>
+    </refsect1>
+
+    <refsect1 id='exit_status'>
+        <title>終了コード</title>
+        <para>
+            In case of success, an exit value of 0 is returned. Otherwise, 1 is
+returned.
+        </para>
+    </refsect1>
+
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/seealso.xml" />
+
+</refentry>
+</reference>

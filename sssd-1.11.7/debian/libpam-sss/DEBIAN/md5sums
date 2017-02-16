@@ -1,0 +1,5 @@
+dc4244ef0054863e6504059480dd975f  lib/x86_64-linux-gnu/security/pam_sss.so
+33be9ae4ebbd14406771d7d5dc552c46  usr/share/doc/libpam-sss/changelog.Debian.gz
+13a01f8bcb4a56e1df65e43e01444c07  usr/share/doc/libpam-sss/copyright
+f2fbcc5dcfc013b83a093729c1430c32  usr/share/man/man8/pam_sss.8.gz
+4e09208579328cea0bf20aadf67cdb02  usr/share/pam-configs/sss

@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE reference PUBLIC "-//OASIS//DTD DocBook V4.4//EN"
+"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<reference>
+<title>SSSD マニュアル ページ</title>
+<refentry>
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/upstream.xml" />
+
+    <refmeta>
+        <refentrytitle>sss_cache</refentrytitle>
+        <manvolnum>8</manvolnum>
+    </refmeta>
+
+    <refnamediv id='name'>
+        <refname>sss_cache</refname>
+        <refpurpose>キャッシュクリーンアップを実行する</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv id='synopsis'>
+        <cmdsynopsis>
+<command>sss_cache</command> <arg choice='opt'>
+<replaceable>options</replaceable> </arg></cmdsynopsis>
+    </refsynopsisdiv>
+
+    <refsect1 id='description'>
+        <title>概要</title>
+        <para>
+            <command>sss_cache</command> は SSSD キャッシュにあるレコードを無効にします。無効化されたレコードは、関連する
+SSSD バックエンドがオンラインになるとすぐに、サーバーから強制的に再読み込みされます。
+        </para>
+    </refsect1>
+
+    <refsect1 id='options'>
+        <title>オプション</title>
+        <variablelist remap='IP'>
+            <varlistentry>
+                <term>
+                    <option>-E</option>,<option>--everything</option>
+                </term>
+                <listitem>
+                    <para>
+                        sudo ルール以外のすべてのキャッシュ項目を無効化します。
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>-u</option>,<option>--user</option> <replaceable>login</replaceable>
+                </term>
+                <listitem>
+                    <para>
+                        特定のユーザーを無効にします。
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>-U</option>,<option>--users</option>
+                </term>
+                <listitem>
+                    <para>
+                        すべてのユーザーレコードを無効にします。このオプションも設定されていると、これが特定のユーザーの無効化を上書きします。
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>-g</option>,<option>--group</option>
+<replaceable>group</replaceable>
+                </term>
+                <listitem>
+                    <para>
+                        特定のグループを無効にします。
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>-G</option>,<option>--groups</option>
+                </term>
+                <listitem>
+                    <para>
+                        すべてのグループレコードを無効にします。このオプションも設定されていると、これが特定のグループの無効化を上書きします。
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>-n</option>,<option>--netgroup</option>
+<replaceable>netgroup</replaceable>
+                </term>
+                <listitem>
+                    <para>
+                        特定のネットワークグループを無効にします。
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>-N</option>,<option>--netgroups</option>
+                </term>
+                <listitem>
+                    <para>
+                        すべてのネットワークグループレコードを無効にします。このオプションが設定されていると、これが特定のネットワークグループの無効化を上書きします。
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>-s</option>,<option>--service</option>
+<replaceable>service</replaceable>
+                </term>
+                <listitem>
+                    <para>
+                        特定のサービスを無効化します。
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>-S</option>,<option>--services</option>
+                </term>
+                <listitem>
+                    <para>
+                        すべてのサービスレコードを無効にします。このオプションも設定されていると、これが特定のサービスの無効化を上書きします。
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry condition="with_autofs">
+                <term>
+                    <option>-a</option>,<option>--autofs-map</option>
+<replaceable>autofs-map</replaceable>
+                </term>
+                <listitem>
+                    <para>
+                        特定の autofs マップを無効化します。
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry condition="with_autofs">
+                <term>
+                    <option>-A</option>,<option>--autofs-maps</option>
+                </term>
+                <listitem>
+                    <para>
+                        すべての autofs マップを無効化します。このオプションは特定のマップが設定されていても、その無効化を上書きします。
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>-d</option>,<option>--domain</option>
+<replaceable>domain</replaceable>
+                </term>
+                <listitem>
+                    <para>
+                        無効化プロセスを特定のドメインのみに制限します。
+                    </para>
+                </listitem>
+            </varlistentry>
+            <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/param_help.xml" />
+        </variablelist>
+    </refsect1>
+
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/seealso.xml" />
+
+</refentry>
+</reference>

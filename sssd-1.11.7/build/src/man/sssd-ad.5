@@ -1,0 +1,566 @@
+'\" t
+.\"     Title: sssd-ad
+.\"    Author: The SSSD upstream - http://fedorahosted.org/sssd
+.\" Generator: DocBook XSL Stylesheets v1.78.1 <http://docbook.sf.net/>
+.\"      Date: 02/16/2017
+.\"    Manual: File Formats and Conventions
+.\"    Source: SSSD
+.\"  Language: English
+.\"
+.TH "SSSD\-AD" "5" "02/16/2017" "SSSD" "File Formats and Conventions"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+sssd-ad \- the configuration file for SSSD
+.SH "DESCRIPTION"
+.PP
+This manual page describes the configuration of the AD provider for
+\fBsssd\fR(8)\&. For a detailed syntax reference, refer to the
+\(lqFILE FORMAT\(rq
+section of the
+\fBsssd.conf\fR(5)
+manual page\&.
+.PP
+The AD provider is a back end used to connect to an Active Directory server\&. This provider requires that the machine be joined to the AD domain and a keytab is available\&.
+.PP
+The AD provider supports connecting to Active Directory 2008 R2 or later\&. Earlier versions may work, but are unsupported\&.
+.PP
+The AD provider is able to provide identity information and authentication for entities from trusted domains as well\&. Currently only trusted domains in the same forest are recognized\&.
+.PP
+The AD provider accepts the same options used by the
+\fBsssd-ldap\fR(5)
+identity provider and the
+\fBsssd-krb5\fR(5)
+authentication provider with some exceptions described below\&.
+.PP
+However, it is neither necessary nor recommended to set these options\&. The AD provider can also be used as an access, chpass and sudo provider\&. No configuration of the access provider is required on the client side\&.
+.PP
+By default, the AD provider will map UID and GID values from the objectSID parameter in Active Directory\&. For details on this, see the
+\(lqID MAPPING\(rq
+section below\&. If you want to disable ID mapping and instead rely on POSIX attributes defined in Active Directory, you should set
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+ldap_id_mapping = False
+            
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+In order to retrieve users and groups using POSIX attributes from trusted domains, the AD administrator must make sure that the POSIX attributes are replicated to the Global Catalog\&.
+.PP
+Users, groups and other entities served by SSSD are always treated as case\-insensitive in the AD provider for compatibility with Active Directory\*(Aqs LDAP implementation\&.
+.SH "CONFIGURATION OPTIONS"
+.PP
+Refer to the section
+\(lqDOMAIN SECTIONS\(rq
+of the
+\fBsssd.conf\fR(5)
+manual page for details on the configuration of an SSSD domain\&.
+.PP
+ad_domain (string)
+.RS 4
+Specifies the name of the Active Directory domain\&. This is optional\&. If not provided, the configuration domain name is used\&.
+.sp
+For proper operation, this option should be specified as the lower\-case version of the long version of the Active Directory domain\&.
+.sp
+The short domain name (also known as the NetBIOS or the flat name) is autodetected by the SSSD\&.
+.RE
+.PP
+ad_server, ad_backup_server (string)
+.RS 4
+The comma\-separated list of hostnames of the AD servers to which SSSD should connect in order of preference\&. For more information on failover and server redundancy, see the
+\(lqFAILOVER\(rq
+section\&. This is optional if autodiscovery is enabled\&. For more information on service discovery, refer to the
+\(lqSERVICE DISCOVERY\(rq
+section\&.
+.RE
+.PP
+ad_hostname (string)
+.RS 4
+Optional\&. May be set on machines where the hostname(5) does not reflect the fully qualified name used in the Active Directory domain to identify this host\&.
+.sp
+This field is used to determine the host principal in use in the keytab\&. It must match the hostname for which the keytab was issued\&.
+.RE
+.PP
+ad_enable_dns_sites (boolean)
+.RS 4
+Enables DNS sites \- location based service discovery\&.
+.sp
+If true and service discovery (see Service Discovery paragraph at the bottom of the man page) is enabled, the SSSD will first attempt to discover the Active Directory server to connect to using the Active Directory Site Discovery and fall back to the DNS SRV records if no AD site is found\&. The DNS SRV configuration, including the discovery domain, is used during site discovery as well\&.
+.sp
+Default: true
+.RE
+.PP
+ad_access_filter (boolean)
+.RS 4
+This option specifies LDAP access control filter that the user must match in order to be allowed access\&. Please note that the
+\(lqaccess_provider\(rq
+option must be explicitly set to
+\(lqad\(rq
+in order for this option to have an effect\&.
+.sp
+The option also supports specifying different filters per domain or forest\&. This extended filter would consist of:
+\(lqKEYWORD:NAME:FILTER\(rq\&. The keyword can be either
+\(lqDOM\(rq,
+\(lqFOREST\(rq
+or missing\&.
+.sp
+If the keyword equals to
+\(lqDOM\(rq
+or is missing, then
+\(lqNAME\(rq
+specifies the domain or subdomain the filter applies to\&. If the keyword equals to
+\(lqFOREST\(rq, then the filter equals to all domains from the forest specified by
+\(lqNAME\(rq\&.
+.sp
+Multiple filters can be separated with the
+\(lq?\(rq
+character, similarly to how search bases work\&.
+.sp
+The most specific match is always used\&. For example, if the option specified filter for a domain the user is a member of and a global filter, the per\-domain filter would be applied\&. If there are more matches with the same specification, the first one is used\&.
+.sp
+Examples:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+# apply filter on domain called dom1 only:
+dom1:(memberOf=cn=admins,ou=groups,dc=dom1,dc=com)
+
+# apply filter on domain called dom2 only:
+DOM:dom2:(memberOf=cn=admins,ou=groups,dc=dom2,dc=com)
+
+# apply filter on forest called EXAMPLE\&.COM only:
+FOREST:EXAMPLE\&.COM:(memberOf=cn=admins,ou=groups,dc=example,dc=com)
+                        
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+Default: Not set
+.RE
+.PP
+ad_enable_gc (boolean)
+.RS 4
+By default, the SSSD connects to the Global Catalog first to retrieve users from trusted domains and uses the LDAP port to retrieve group memberships or as a fallback\&. Disabling this option makes the SSSD only connect to the LDAP port of the current AD server\&.
+.sp
+Please note that disabling Global Catalog support does not disable retrieving users from trusted domains\&. The SSSD would connect to the LDAP port of trusted domains instead\&. However, Global Catalog must be used in order to resolve cross\-domain group memberships\&.
+.sp
+Default: true
+.RE
+.PP
+dyndns_update (boolean)
+.RS 4
+Optional\&. This option tells SSSD to automatically update the Active Directory DNS server with the IP address of this client\&. The update is secured using GSS\-TSIG\&. As a consequence, the Active Directory administrator only needs to allow secure updates for the DNS zone\&. The IP address of the AD LDAP connection is used for the updates, if it is not otherwise specified by using the
+\(lqdyndns_iface\(rq
+option\&.
+.sp
+NOTE: On older systems (such as RHEL 5), for this behavior to work reliably, the default Kerberos realm must be set properly in /etc/krb5\&.conf
+.sp
+Default: true
+.RE
+.PP
+dyndns_ttl (integer)
+.RS 4
+The TTL to apply to the client DNS record when updating it\&. If dyndns_update is false this has no effect\&. This will override the TTL serverside if set by an administrator\&.
+.sp
+Default: 3600 (seconds)
+.RE
+.PP
+dyndns_iface (string)
+.RS 4
+Optional\&. Applicable only when dyndns_update is true\&. Choose the interface whose IP address should be used for dynamic DNS updates\&.
+.sp
+Default: Use the IP address of the AD LDAP connection
+.RE
+.PP
+dyndns_refresh_interval (integer)
+.RS 4
+How often should the back end perform periodic DNS update in addition to the automatic update performed when the back end goes online\&. This option is optional and applicable only when dyndns_update is true\&.
+.sp
+Default: 86400 (24 hours)
+.RE
+.PP
+dyndns_update_ptr (bool)
+.RS 4
+Whether the PTR record should also be explicitly updated when updating the client\*(Aqs DNS records\&. Applicable only when dyndns_update is true\&.
+.sp
+Default: True
+.RE
+.PP
+dyndns_force_tcp (bool)
+.RS 4
+Whether the nsupdate utility should default to using TCP for communicating with the DNS server\&.
+.sp
+Default: False (let nsupdate choose the protocol)
+.RE
+.PP
+override_homedir (string)
+.RS 4
+Override the user\*(Aqs home directory\&. You can either provide an absolute value or a template\&. In the template, the following sequences are substituted:
+.PP
+%u
+.RS 4
+login name
+.RE
+.PP
+%U
+.RS 4
+UID number
+.RE
+.PP
+%d
+.RS 4
+domain name
+.RE
+.PP
+%f
+.RS 4
+fully qualified user name (user@domain)
+.RE
+.PP
+%o
+.RS 4
+The original home directory retrieved from the identity provider\&.
+.RE
+.PP
+%H
+.RS 4
+The value of configure option
+\fIhomedir_substring\fR\&.
+.RE
+.PP
+%%
+.RS 4
+a literal \*(Aq%\*(Aq
+.RE
+.sp
+This option can also be set per\-domain\&.
+.sp
+example:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+override_homedir = /home/%u
+        
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+Default: Not set (SSSD will use the value retrieved from LDAP)
+.RE
+.PP
+homedir_substring (string)
+.RS 4
+The value of this option will be used in the expansion of the
+\fIoverride_homedir\fR
+option if the template contains the format string
+\fI%H\fR\&. An LDAP directory entry can directly contain this template so that this option can be used to expand the home directory path for each client machine (or operating system)\&. It can be set per\-domain or globally in the [nss] section\&. A value specified in a domain section will override one set in the [nss] section\&.
+.sp
+Default: /home
+.RE
+.PP
+krb5_use_enterprise_principal (boolean)
+.RS 4
+Specifies if the user principal should be treated as enterprise principal\&. See section 5 of RFC 6806 for more details about enterprise principals\&.
+.sp
+Default: true
+.sp
+Note that this default differs from the traditional Kerberos provider back end\&.
+.RE
+.SH "FAILOVER"
+.PP
+The failover feature allows back ends to automatically switch to a different server if the current server fails\&.
+.SS "Failover Syntax"
+.PP
+The list of servers is given as a comma\-separated list; any number of spaces is allowed around the comma\&. The servers are listed in order of preference\&. The list can contain any number of servers\&.
+.PP
+For each failover\-enabled config option, two variants exist:
+\fIprimary\fR
+and
+\fIbackup\fR\&. The idea is that servers in the primary list are preferred and backup servers are only searched if no primary servers can be reached\&. If a backup server is selected, a timeout of 31 seconds is set\&. After this timeout SSSD will periodically try to reconnect to one of the primary servers\&. If it succeeds, it will replace the current active (backup) server\&.
+.SS "The Failover Mechanism"
+.PP
+The failover mechanism distinguishes between a machine and a service\&. The back end first tries to resolve the hostname of a given machine; if this resolution attempt fails, the machine is considered offline\&. No further attempts are made to connect to this machine for any other service\&. If the resolution attempt succeeds, the back end tries to connect to a service on this machine\&. If the service connection attempt fails, then only this particular service is considered offline and the back end automatically switches over to the next service\&. The machine is still considered online and might still be tried for another service\&.
+.PP
+Further connection attempts are made to machines or services marked as offline after a specified period of time; this is currently hard coded to 30 seconds\&.
+.PP
+If there are no more machines to try, the back end as a whole switches to offline mode, and then attempts to reconnect every 30 seconds\&.
+.SH "SERVICE DISCOVERY"
+.PP
+The service discovery feature allows back ends to automatically find the appropriate servers to connect to using a special DNS query\&. This feature is not supported for backup servers\&.
+.SS "Configuration"
+.PP
+If no servers are specified, the back end automatically uses service discovery to try to find a server\&. Optionally, the user may choose to use both fixed server addresses and service discovery by inserting a special keyword,
+\(lq_srv_\(rq, in the list of servers\&. The order of preference is maintained\&. This feature is useful if, for example, the user prefers to use service discovery whenever possible, and fall back to a specific server when no servers can be discovered using DNS\&.
+.SS "The domain name"
+.PP
+Please refer to the
+\(lqdns_discovery_domain\(rq
+parameter in the
+\fBsssd.conf\fR(5)
+manual page for more details\&.
+.SS "The protocol"
+.PP
+The queries usually specify _tcp as the protocol\&. Exceptions are documented in respective option description\&.
+.SS "See Also"
+.PP
+For more information on the service discovery mechanism, refer to RFC 2782\&.
+.SH "ID MAPPING"
+.PP
+The ID\-mapping feature allows SSSD to act as a client of Active Directory without requiring administrators to extend user attributes to support POSIX attributes for user and group identifiers\&.
+.PP
+NOTE: When ID\-mapping is enabled, the uidNumber and gidNumber attributes are ignored\&. This is to avoid the possibility of conflicts between automatically\-assigned and manually\-assigned values\&. If you need to use manually\-assigned values, ALL values must be manually\-assigned\&.
+.PP
+Please note that changing the ID mapping related configuration options will cause user and group IDs to change\&. At the moment, SSSD does not support changing IDs, so the SSSD database must be removed\&. Because cached passwords are also stored in the database, removing the database should only be performed while the authentication servers are reachable, otherwise users might get locked out\&. In order to cache the password, an authentication must be performed\&. It is not sufficient to use
+\fBsss_cache\fR(8)
+to remove the database, rather the process consists of:
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+Making sure the remote servers are reachable
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+Stopping the SSSD service
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+Removing the database
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+Starting the SSSD service
+.RE
+.sp
+Moreover, as the change of IDs might necessitate the adjustment of other system properties such as file and directory ownership, it\*(Aqs advisable to plan ahead and test the ID mapping configuration thoroughly\&.
+.SS "Mapping Algorithm"
+.PP
+Active Directory provides an objectSID for every user and group object in the directory\&. This objectSID can be broken up into components that represent the Active Directory domain identity and the relative identifier (RID) of the user or group object\&.
+.PP
+The SSSD ID\-mapping algorithm takes a range of available UIDs and divides it into equally\-sized component sections \- called "slices"\-\&. Each slice represents the space available to an Active Directory domain\&.
+.PP
+When a user or group entry for a particular domain is encountered for the first time, the SSSD allocates one of the available slices for that domain\&. In order to make this slice\-assignment repeatable on different client machines, we select the slice based on the following algorithm:
+.PP
+The SID string is passed through the murmurhash3 algorithm to convert it to a 32\-bit hashed value\&. We then take the modulus of this value with the total number of available slices to pick the slice\&.
+.PP
+NOTE: It is possible to encounter collisions in the hash and subsequent modulus\&. In these situations, we will select the next available slice, but it may not be possible to reproduce the same exact set of slices on other machines (since the order that they are encountered will determine their slice)\&. In this situation, it is recommended to either switch to using explicit POSIX attributes in Active Directory (disabling ID\-mapping) or configure a default domain to guarantee that at least one is always consistent\&. See
+\(lqConfiguration\(rq
+for details\&.
+.SS "Configuration"
+.PP
+Minimum configuration (in the
+\(lq[domain/DOMAINNAME]\(rq
+section):
+.PP
+.if n \{\
+.RS 4
+.\}
+.nf
+ldap_id_mapping = True
+ldap_schema = ad
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+The default configuration results in configuring 10,000 slices, each capable of holding up to 200,000 IDs, starting from 10,001 and going up to 2,000,100,000\&. This should be sufficient for most deployments\&.
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBAdvanced Configuration\fR
+.RS 4
+.PP
+ldap_idmap_range_min (integer)
+.RS 4
+Specifies the lower bound of the range of POSIX IDs to use for mapping Active Directory user and group SIDs\&.
+.sp
+NOTE: This option is different from
+\(lqmin_id\(rq
+in that
+\(lqmin_id\(rq
+acts to filter the output of requests to this domain, whereas this option controls the range of ID assignment\&. This is a subtle distinction, but the good general advice would be to have
+\(lqmin_id\(rq
+be less\-than or equal to
+\(lqldap_idmap_range_min\(rq
+.sp
+Default: 200000
+.RE
+.PP
+ldap_idmap_range_max (integer)
+.RS 4
+Specifies the upper bound of the range of POSIX IDs to use for mapping Active Directory user and group SIDs\&.
+.sp
+NOTE: This option is different from
+\(lqmax_id\(rq
+in that
+\(lqmax_id\(rq
+acts to filter the output of requests to this domain, whereas this option controls the range of ID assignment\&. This is a subtle distinction, but the good general advice would be to have
+\(lqmax_id\(rq
+be greater\-than or equal to
+\(lqldap_idmap_range_max\(rq
+.sp
+Default: 2000200000
+.RE
+.PP
+ldap_idmap_range_size (integer)
+.RS 4
+Specifies the number of IDs available for each slice\&. If the range size does not divide evenly into the min and max values, it will create as many complete slices as it can\&.
+.sp
+Default: 200000
+.RE
+.PP
+ldap_idmap_default_domain_sid (string)
+.RS 4
+Specify the domain SID of the default domain\&. This will guarantee that this domain will always be assigned to slice zero in the ID map, bypassing the murmurhash algorithm described above\&.
+.sp
+Default: not set
+.RE
+.PP
+ldap_idmap_default_domain (string)
+.RS 4
+Specify the name of the default domain\&.
+.sp
+Default: not set
+.RE
+.PP
+ldap_idmap_autorid_compat (boolean)
+.RS 4
+Changes the behavior of the ID\-mapping algorithm to behave more similarly to winbind\*(Aqs
+\(lqidmap_autorid\(rq
+algorithm\&.
+.sp
+When this option is configured, domains will be allocated starting with slice zero and increasing monatomically with each additional domain\&.
+.sp
+NOTE: This algorithm is non\-deterministic (it depends on the order that users and groups are requested)\&. If this mode is required for compatibility with machines running winbind, it is recommended to also use the
+\(lqldap_idmap_default_domain_sid\(rq
+option to guarantee that at least one domain is consistently allocated to slice zero\&.
+.sp
+Default: False
+.RE
+.RE
+.SH "EXAMPLE"
+.PP
+The following example assumes that SSSD is correctly configured and example\&.com is one of the domains in the
+\fI[sssd]\fR
+section\&. This example shows only the AD provider\-specific options\&.
+.PP
+.if n \{\
+.RS 4
+.\}
+.nf
+[domain/EXAMPLE]
+id_provider = ad
+auth_provider = ad
+access_provider = ad
+chpass_provider = ad
+
+ad_server = dc1\&.example\&.com
+ad_hostname = client\&.example\&.com
+ad_domain = example\&.com
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+.SH "NOTES"
+.PP
+The AD access control provider checks if the account is expired\&. It has the same effect as the following configuration of the LDAP provider:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+access_provider = ldap
+ldap_access_order = expire
+ldap_account_expire_policy = ad
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+However, unless the
+\(lqad\(rq
+access control provider is explicitly configured, the default access provider is
+\(lqpermit\(rq\&.
+.SH "SEE ALSO"
+.PP
+\fBsssd\fR(8),
+\fBsssd.conf\fR(5),
+\fBsssd-ldap\fR(5),
+\fBsssd-krb5\fR(5),
+\fBsssd-simple\fR(5),
+\fBsssd-ipa\fR(5),
+\fBsssd-ad\fR(5),
+\fBsssd-sudo\fR(5),\fBsss_cache\fR(8),
+\fBsss_debuglevel\fR(8),
+\fBsss_groupadd\fR(8),
+\fBsss_groupdel\fR(8),
+\fBsss_groupshow\fR(8),
+\fBsss_groupmod\fR(8),
+\fBsss_useradd\fR(8),
+\fBsss_userdel\fR(8),
+\fBsss_usermod\fR(8),
+\fBsss_obfuscate\fR(8),
+\fBsss_seed\fR(8),
+\fBsssd_krb5_locator_plugin\fR(8),
+\fBsss_ssh_authorizedkeys\fR(8), \fBsss_ssh_knownhostsproxy\fR(8),\fBsssd-ifp\fR(5),\fBpam_sss\fR(8)\&.
+.SH "AUTHORS"
+.PP
+\fBThe SSSD upstream \- http://fedorahosted\&.org/sssd\fR

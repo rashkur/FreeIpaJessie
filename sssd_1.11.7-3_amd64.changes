@@ -1,0 +1,121 @@
+Format: 1.8
+Date: Fri, 16 Jan 2015 13:53:22 +0200
+Source: sssd
+Binary: sssd sssd-common sssd-ad sssd-ad-common sssd-dbus sssd-ipa sssd-krb5 sssd-krb5-common sssd-ldap sssd-proxy sssd-tools libnss-sss libpam-sss libipa-hbac0 libipa-hbac-dev libsss-idmap0 libsss-idmap-dev libsss-nss-idmap0 libsss-nss-idmap-dev libsss-sudo python-libipa-hbac python-libsss-nss-idmap python-sss
+Architecture: source amd64
+Version: 1.11.7-3
+Distribution: unstable
+Urgency: medium
+Maintainer: Debian SSSD Team <pkg-sssd-devel@lists.alioth.debian.org>
+Changed-By: Timo Aaltonen <tjaalton@debian.org>
+Description:
+ libipa-hbac-dev - FreeIPA HBAC Evaluator library
+ libipa-hbac0 - FreeIPA HBAC Evaluator library
+ libnss-sss - Nss library for the System Security Services Daemon
+ libpam-sss - Pam module for the System Security Services Daemon
+ libsss-idmap-dev - ID mapping library for SSSD -- development files
+ libsss-idmap0 - ID mapping library for SSSD
+ libsss-nss-idmap-dev - SID based lookups library for SSSD -- development files
+ libsss-nss-idmap0 - SID based lookups library for SSSD
+ libsss-sudo - Communicator library for sudo
+ python-libipa-hbac - Python bindings for the FreeIPA HBAC Evaluator library
+ python-libsss-nss-idmap - Python bindings for the SID lookups library
+ python-sss - Python module for the System Security Services Daemon
+ sssd       - System Security Services Daemon -- metapackage
+ sssd-ad    - System Security Services Daemon -- Active Directory back end
+ sssd-ad-common - System Security Services Daemon -- PAC responder
+ sssd-common - System Security Services Daemon -- common files
+ sssd-dbus  - System Security Services Daemon -- D-Bus responder
+ sssd-ipa   - System Security Services Daemon -- IPA back end
+ sssd-krb5  - System Security Services Daemon -- Kerberos back end
+ sssd-krb5-common - System Security Services Daemon -- Kerberos helpers
+ sssd-ldap  - System Security Services Daemon -- LDAP back end
+ sssd-proxy - System Security Services Daemon -- proxy back end
+ sssd-tools - System Security Services Daemon -- tools
+Closes: 749722
+Changes:
+ sssd (1.11.7-3) unstable; urgency=medium
+ .
+   * libsss-sudo.postrm: Delete sudoers line from nsswitch.conf, if only
+     files source left. (Closes: #749722)
+   * libsss-sudo.postinst: Fix comments.
+   * libsss-sudo.postinst: Check nsswitch sudoers entry unconditionally,
+     so that it is added on upgrade too if missing.
+Checksums-Sha1:
+ 13a3b364fbc0f5634ca2ef8d2b5301e86f7cf76c 2841 sssd_1.11.7-3.dsc
+ 07b91abb6bafc5ed5d322ba8eff617ed6e83bdcb 49594 sssd_1.11.7-3.diff.gz
+ fee8fce04b9acb1b145c4c55a7d0a6ac5a4b5512 13266 sssd_1.11.7-3_amd64.deb
+ d0d65bd4d771234c2949f28ae788fb44b8aa95f8 631042 sssd-common_1.11.7-3_amd64.deb
+ 84a85a0e0040ec23375a45ffddcd6427274d3191 66198 sssd-ad_1.11.7-3_amd64.deb
+ 6b3db6952df70b0fbf8736501add4bf033f8aaae 44282 sssd-ad-common_1.11.7-3_amd64.deb
+ 2d61c866c9ccde21482463467acc13033bea77fd 45106 sssd-dbus_1.11.7-3_amd64.deb
+ 38115759c84d2788e0e8a89b29315316673dccac 112900 sssd-ipa_1.11.7-3_amd64.deb
+ 091b8b91ee694dcf629bdc23e194c6ba9cca90c3 28740 sssd-krb5_1.11.7-3_amd64.deb
+ 2801e68cff38fab227ef0d0ecf0eba01626b606d 83324 sssd-krb5-common_1.11.7-3_amd64.deb
+ 6b9e82820c44bf73969fea8d9baaaf219b5452e0 58814 sssd-ldap_1.11.7-3_amd64.deb
+ 79e3eb167d614f1f6193badb6a84c0b864f12c3f 39758 sssd-proxy_1.11.7-3_amd64.deb
+ e1d5fd8e66c1ed5ba1d585b05aa8fe62b7f887b1 113048 sssd-tools_1.11.7-3_amd64.deb
+ f6aa45513c9bd3f80464397c8776877c0606a7ce 26076 libnss-sss_1.11.7-3_amd64.deb
+ f91c765d024e1d16d9eb3b4afbc6d98ed16eddfe 28156 libpam-sss_1.11.7-3_amd64.deb
+ 0d4bbfe06de7fd18ca660c4972fa9ea7c38afd1b 16522 libipa-hbac0_1.11.7-3_amd64.deb
+ 56580d0964711d34c9bf656d2df5cc8d70623821 15446 libipa-hbac-dev_1.11.7-3_amd64.deb
+ 5233e964c8c60f58aeef27fbb312907481d1d5d1 20950 libsss-idmap0_1.11.7-3_amd64.deb
+ e4a8596a65efb92a63c29cfbdb359d798343c58b 17222 libsss-idmap-dev_1.11.7-3_amd64.deb
+ 2ec952d9e2256d5f4b371d5de9e2d793f7a6493f 19756 libsss-nss-idmap0_1.11.7-3_amd64.deb
+ 41b2b08224914336204afee1cb11e0277e69e30f 14192 libsss-nss-idmap-dev_1.11.7-3_amd64.deb
+ a133a1ba54c73b35115d883312ac3b1aab90e75f 20756 libsss-sudo_1.11.7-3_amd64.deb
+ 1e2fd465e8e913e411921383b2bd1d7e5a887410 24178 python-libipa-hbac_1.11.7-3_amd64.deb
+ 57daceff43b4253076411052336ef617247958d6 16794 python-libsss-nss-idmap_1.11.7-3_amd64.deb
+ 157dece2aa152c37745295b4350141b5a3ace4fb 55428 python-sss_1.11.7-3_amd64.deb
+Checksums-Sha256:
+ 693e6e47d40c6fb39061e23036adeb32ec2d914f5672479fd2e57c8aa4eb4768 2841 sssd_1.11.7-3.dsc
+ 1fb957730e790c76854a62aae98fd5e39bd96c932593901089494b303608cdd0 49594 sssd_1.11.7-3.diff.gz
+ 910c33f7d32be95f2d36318862e9435eebcc47f4750b9789d2094e21db273d38 13266 sssd_1.11.7-3_amd64.deb
+ c76ea39ad6a773bd766a17f2e1e8dee49ceed59bcb0ac961b91f258a60849d1c 631042 sssd-common_1.11.7-3_amd64.deb
+ eedb1f24878b497d9edb3045f98c21ee62ce6bed0bf063f1972475dac92dffe3 66198 sssd-ad_1.11.7-3_amd64.deb
+ dc39516c1b54bf9dfd5e975440fa760db909b2c2423f3bf03767014886c13ed1 44282 sssd-ad-common_1.11.7-3_amd64.deb
+ 0d5b0a709869faad86e95718ea22f4447492050cbf3d3ac23a87b4a812bd57c1 45106 sssd-dbus_1.11.7-3_amd64.deb
+ 90e0535250982e6f43c5014c33b6f883434e42c84d6bdac9ddb6cf0b99ea3d8d 112900 sssd-ipa_1.11.7-3_amd64.deb
+ 14bc205dcb7efef7737b2ebd9b3a7e22a52a236d2427d8dff26cc287ed3e3376 28740 sssd-krb5_1.11.7-3_amd64.deb
+ 51398dee5f43841908871988acf6bc79c24131c0841bfded0037a3f91cfba9b7 83324 sssd-krb5-common_1.11.7-3_amd64.deb
+ 1f69c742c361db60339027cdb380961f9dc090a70718373f2a661b352fbe6ca8 58814 sssd-ldap_1.11.7-3_amd64.deb
+ 90462afd17a16a55a0bcd964b5f9ca4adf5c438507896ad53909c23fd045f3b5 39758 sssd-proxy_1.11.7-3_amd64.deb
+ 77613c0cb216dc837aeb6888712539c57cd413fb5be2d7a73138483355f9fe90 113048 sssd-tools_1.11.7-3_amd64.deb
+ ab059bd81dba033912537c7baa641b501b2c18c1dec08a557e6f02a3b67ffd0f 26076 libnss-sss_1.11.7-3_amd64.deb
+ 059045273b368f79a616b9b9a38cab3199aa40133d7ba0e5eb3b94a05ea201c4 28156 libpam-sss_1.11.7-3_amd64.deb
+ ce585fbbe1f942467932cf0f2718ae7146794eb36027fd269426430cab73252b 16522 libipa-hbac0_1.11.7-3_amd64.deb
+ 4878f308480130d2c7de27ebd407ccc4c5dee5cadc89ecdf5f12b98273fc183e 15446 libipa-hbac-dev_1.11.7-3_amd64.deb
+ 4a7d1759e2a3ea64a65bd28a328ee93a38423307c589e250209b46c370a37d8c 20950 libsss-idmap0_1.11.7-3_amd64.deb
+ 31cd16155a588414603eb39779be2e3a20f631fe4abc596e314fb3734bddb566 17222 libsss-idmap-dev_1.11.7-3_amd64.deb
+ 1e5657413b041ef98a7471abdeca1e9afdb07218b5ffb689d738289be62efaef 19756 libsss-nss-idmap0_1.11.7-3_amd64.deb
+ 3ea89a5a5ac7b409c5318c7130fdd3d466f19648e238e00f03cc83adb7847802 14192 libsss-nss-idmap-dev_1.11.7-3_amd64.deb
+ ee143be3e265a39e2b7d9d7b02cb9b6a0a336ec014ee7fffc9ffd7823822c1db 20756 libsss-sudo_1.11.7-3_amd64.deb
+ 418ac409916f39c8c6160c0aabf5a5cc918608a857b6cb93d097e62b87bae8db 24178 python-libipa-hbac_1.11.7-3_amd64.deb
+ 1ebcaea7eb1be239cdc2eeafd679326e261cc310d7086bfec1ec1c796bf3e9bb 16794 python-libsss-nss-idmap_1.11.7-3_amd64.deb
+ 1e577c9b6d8f1d0aeec2ac24db30b13cc2707b2b4e199148f1bf0f1b53074606 55428 python-sss_1.11.7-3_amd64.deb
+Files:
+ dd0d5546e4868f8400667d03581d219d 2841 utils extra sssd_1.11.7-3.dsc
+ aa9e36073b7fb1869b555402d0e1d097 49594 utils extra sssd_1.11.7-3.diff.gz
+ 8a84cc3b5f7207e7ec2cdbb50e43138c 13266 metapackages extra sssd_1.11.7-3_amd64.deb
+ c42476ccb3f8c091e4252687e65ffdb6 631042 utils extra sssd-common_1.11.7-3_amd64.deb
+ b2d723ac7e984be48f8db7012cee4a33 66198 utils extra sssd-ad_1.11.7-3_amd64.deb
+ e326c80708c1db66dba65015916d5b02 44282 utils extra sssd-ad-common_1.11.7-3_amd64.deb
+ 3dee9112c07a733e6ed72b0a97930888 45106 utils extra sssd-dbus_1.11.7-3_amd64.deb
+ dc0c3fc8043fcd7d29e5fc6fa1e16276 112900 utils extra sssd-ipa_1.11.7-3_amd64.deb
+ c93a5a9a2385d7ed02c6bfb930bfe01c 28740 utils extra sssd-krb5_1.11.7-3_amd64.deb
+ b491270057d61f3bce164230c3068715 83324 utils extra sssd-krb5-common_1.11.7-3_amd64.deb
+ 8ceb7b31aab6eac117dae3bdd4198ee4 58814 utils extra sssd-ldap_1.11.7-3_amd64.deb
+ d77b7a2ce1fabf975281050d397d64c3 39758 utils extra sssd-proxy_1.11.7-3_amd64.deb
+ 9a696ae49f40caab3b8c7c5bd7205891 113048 utils extra sssd-tools_1.11.7-3_amd64.deb
+ 2713012331143e54257680ed38e11624 26076 utils extra libnss-sss_1.11.7-3_amd64.deb
+ 9d6e36f0774b3c2653181762013e6bf0 28156 utils extra libpam-sss_1.11.7-3_amd64.deb
+ 9eec34d80a2313aaec94e8e882a22eb7 16522 libs extra libipa-hbac0_1.11.7-3_amd64.deb
+ 651a563c6da13545b52c23f51e9febed 15446 libdevel extra libipa-hbac-dev_1.11.7-3_amd64.deb
+ dc435d97b537e627239a83728a3f415b 20950 libs extra libsss-idmap0_1.11.7-3_amd64.deb
+ cd9cd4d2d585977696dcca0862b8abf0 17222 libdevel extra libsss-idmap-dev_1.11.7-3_amd64.deb
+ 2774be967fccdf06d7847d621d3eb8af 19756 libs extra libsss-nss-idmap0_1.11.7-3_amd64.deb
+ f057e4b8fd20c07f536581393eb43933 14192 libdevel extra libsss-nss-idmap-dev_1.11.7-3_amd64.deb
+ 010d86a26763f9a8e068bc90814e2639 20756 libs extra libsss-sudo_1.11.7-3_amd64.deb
+ 6a05135bca158c552d9fa7614830555e 24178 python extra python-libipa-hbac_1.11.7-3_amd64.deb
+ 577e72bda4226a754176c301761ccc8e 16794 python extra python-libsss-nss-idmap_1.11.7-3_amd64.deb
+ b82b6e827c571a418bb4201715e13318 55428 python extra python-sss_1.11.7-3_amd64.deb

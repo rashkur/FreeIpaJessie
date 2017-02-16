@@ -1,0 +1,4 @@
+78f00fe71e88acd95914cd47090a7569  usr/lib/x86_64-linux-gnu/sssd/libsss_krb5.so
+33be9ae4ebbd14406771d7d5dc552c46  usr/share/doc/sssd-krb5/changelog.Debian.gz
+13a01f8bcb4a56e1df65e43e01444c07  usr/share/doc/sssd-krb5/copyright
+42ea577cb48ca615fde55064f201e8fb  usr/share/man/man5/sssd-krb5.5.gz

@@ -1,0 +1,1 @@
+shlib-without-versioned-soname usr/lib/*/libsss_sudo.so libsss_sudo.so

@@ -1,0 +1,44 @@
+#!/bin/sh
+set -e
+
+
+
+# This code was taken from libnss-myhostname, which got it from nss-mdns:
+
+log() {
+    echo "$*"
+}
+
+remove_nss_entry() {
+    log "Checking NSS setup..."
+    # abort if /etc/nsswitch.conf does not exist
+    if ! [ -e /etc/nsswitch.conf ]; then
+        log "Could not find /etc/nsswitch.conf."
+        return
+    fi
+    sed -i --regexp-extended '
+      /^(sudoers):/ {
+        s/\bsss\b//g
+        s/[[:space:]]+$//
+      }
+    ' /etc/nsswitch.conf
+
+    # delete sudoers line if only default entry left"
+    if ! [ -z "grep \"^sudoers:        files$\" /etc/nsswitch.conf" ]; then
+        sed -i /^sudoers:/d /etc/nsswitch.conf
+    fi
+}
+
+case "$1" in
+    remove|purge)
+        remove_nss_entry
+        ldconfig
+    ;;
+    upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
+    ;;
+
+    *)
+        echo "postrm called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac

@@ -1,0 +1,146 @@
+'\" t
+.\"     Title: sss_useradd
+.\"    Author: The SSSD upstream - http://fedorahosted.org/sssd
+.\" Generator: DocBook XSL Stylesheets v1.78.1 <http://docbook.sf.net/>
+.\"      Date: 02/16/2017
+.\"    Manual: SSSD Manual pages
+.\"    Source: SSSD
+.\"  Language: English
+.\"
+.TH "SSS_USERADD" "8" "02/16/2017" "SSSD" "SSSD Manual pages"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+sss_useradd \- create a new user
+.SH "SYNOPSIS"
+.HP \w'\fBsss_useradd\fR\ 'u
+\fBsss_useradd\fR [\fIoptions\fR] \fILOGIN\fR
+.SH "DESCRIPTION"
+.PP
+\fBsss_useradd\fR
+creates a new user account using the values specified on the command line plus the default values from the system\&.
+.SH "OPTIONS"
+.PP
+\fB\-u\fR,\fB\-\-uid\fR \fIUID\fR
+.RS 4
+Set the UID of the user to the value of
+\fIUID\fR\&. If not given, it is chosen automatically\&.
+.RE
+.PP
+\fB\-c\fR,\fB\-\-gecos\fR \fICOMMENT\fR
+.RS 4
+Any text string describing the user\&. Often used as the field for the user\*(Aqs full name\&.
+.RE
+.PP
+\fB\-h\fR,\fB\-\-home\fR \fIHOME_DIR\fR
+.RS 4
+The home directory of the user account\&. The default is to append the
+\fILOGIN\fR
+name to
+/home
+and use that as the home directory\&. The base that is prepended before
+\fILOGIN\fR
+is tunable with
+\(lquser_defaults/baseDirectory\(rq
+setting in sssd\&.conf\&.
+.RE
+.PP
+\fB\-s\fR,\fB\-\-shell\fR \fISHELL\fR
+.RS 4
+The user\*(Aqs login shell\&. The default is currently
+/bin/bash\&. The default can be changed with
+\(lquser_defaults/defaultShell\(rq
+setting in sssd\&.conf\&.
+.RE
+.PP
+\fB\-G\fR,\fB\-\-groups\fR \fIGROUPS\fR
+.RS 4
+A list of existing groups this user is also a member of\&.
+.RE
+.PP
+\fB\-m\fR,\fB\-\-create\-home\fR
+.RS 4
+Create the user\*(Aqs home directory if it does not exist\&. The files and directories contained in the skeleton directory (which can be defined with the \-k option or in the config file) will be copied to the home directory\&.
+.RE
+.PP
+\fB\-M\fR,\fB\-\-no\-create\-home\fR
+.RS 4
+Do not create the user\*(Aqs home directory\&. Overrides configuration settings\&.
+.RE
+.PP
+\fB\-k\fR,\fB\-\-skel\fR \fISKELDIR\fR
+.RS 4
+The skeleton directory, which contains files and directories to be copied in the user\*(Aqs home directory, when the home directory is created by
+\fBsss_useradd\fR\&.
+.sp
+Special files (block devices, character devices, named pipes and unix sockets) will not be copied\&.
+.sp
+This option is only valid if the
+\fB\-m\fR
+(or
+\fB\-\-create\-home\fR) option is specified, or creation of home directories is set to TRUE in the configuration\&.
+.RE
+.PP
+\fB\-Z\fR,\fB\-\-selinux\-user\fR \fISELINUX_USER\fR
+.RS 4
+The SELinux user for the user\*(Aqs login\&. If not specified, the system default will be used\&.
+.RE
+.PP
+\fB\-?\fR,\fB\-\-help\fR
+.RS 4
+Display help message and exit\&.
+.RE
+.SH "THE LOCAL DOMAIN"
+.PP
+In order to function correctly, a domain with
+\(lqid_provider=local\(rq
+must be created and the SSSD must be running\&.
+.PP
+The administrator might want to use the SSSD local users instead of traditional UNIX users in cases where the group nesting (see
+\fBsss_groupadd\fR(8)) is needed\&. The local users are also useful for testing and development of the SSSD without having to deploy a full remote server\&. The
+\fBsss_user*\fR
+and
+\fBsss_group*\fR
+tools use a local LDB storage to store users and groups\&.
+.SH "SEE ALSO"
+.PP
+\fBsssd\fR(8),
+\fBsssd.conf\fR(5),
+\fBsssd-ldap\fR(5),
+\fBsssd-krb5\fR(5),
+\fBsssd-simple\fR(5),
+\fBsssd-ipa\fR(5),
+\fBsssd-ad\fR(5),
+\fBsssd-sudo\fR(5),\fBsss_cache\fR(8),
+\fBsss_debuglevel\fR(8),
+\fBsss_groupadd\fR(8),
+\fBsss_groupdel\fR(8),
+\fBsss_groupshow\fR(8),
+\fBsss_groupmod\fR(8),
+\fBsss_useradd\fR(8),
+\fBsss_userdel\fR(8),
+\fBsss_usermod\fR(8),
+\fBsss_obfuscate\fR(8),
+\fBsss_seed\fR(8),
+\fBsssd_krb5_locator_plugin\fR(8),
+\fBsss_ssh_authorizedkeys\fR(8), \fBsss_ssh_knownhostsproxy\fR(8),\fBsssd-ifp\fR(5),\fBpam_sss\fR(8)\&.
+.SH "AUTHORS"
+.PP
+\fBThe SSSD upstream \- http://fedorahosted\&.org/sssd\fR

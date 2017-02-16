@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE reference PUBLIC "-//OASIS//DTD DocBook V4.4//EN"
+"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<reference>
+<title>Páginas de manual de SSSD</title>
+<refentry>
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/upstream.xml" />
+
+    <refmeta>
+        <refentrytitle>sss_ssh_knownhostsproxy</refentrytitle>
+        <manvolnum>1</manvolnum>
+    </refmeta>
+
+    <refnamediv id='name'>
+        <refname>sss_ssh_knownhostsproxy</refname>
+        <refpurpose>obtiene las claves OpenSSH del host</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv id='synopsis'>
+        <cmdsynopsis>
+<command>sss_ssh_knownhostsproxy</command> <arg choice='opt'>
+<replaceable>options</replaceable> </arg> <arg
+choice='plain'><replaceable>HOST</replaceable></arg> <arg
+choice='opt'><replaceable>PROXY_COMMAND</replaceable></arg></cmdsynopsis>
+    </refsynopsisdiv>
+
+    <refsect1 id='description'>
+        <title>DESCRIPCION</title>
+        <para>
+            <command>sss_ssh_knownhostsproxy</command> adquiere las claves públicas SSH
+del host para el host <replaceable>HOST</replaceable>, las almacena en un
+fichero personal OpenSSH conocido por el host (vea la sección
+<quote>SSH_KNOWN_HOSTS FILE FORMAT</quote> de
+<citerefentry><refentrytitle>sshd</refentrytitle>
+<manvolnum>8</manvolnum></citerefentry> para más información)
+<filename>/var/lib/sss/pubconf/known_hosts</filename> y establece la
+conexión al host.
+        </para>
+        <para>
+            Si se especifica <replaceable>PROXY_COMMAND</replaceable>, se usa para crear
+la conexión al host en lugar de abrir un socket.
+        </para>
+        <para>
+            <citerefentry><refentrytitle>ssh</refentrytitle>
+<manvolnum>1</manvolnum></citerefentry> puede ser configurado para usar
+<command>sss_ssh_knownhostsproxy</command> para autenticación de la clave
+del host usando las siguientes directivas
+<citerefentry><refentrytitle>ssh</refentrytitle>
+<manvolnum>1</manvolnum></citerefentry> configuration: <programlisting>
+ProxyCommand /usr/bin/sss_ssh_knownhostsproxy -p %p %h
+GlobalKnownHostsFile /var/lib/sss/pubconf/known_hosts
+</programlisting> 
+        </para>
+    </refsect1>
+
+    <refsect1 id='options'>
+        <title>OPCIONES</title>
+        <variablelist remap='IP'>
+            <varlistentry>
+                <term>
+                    <option>-p</option>,<option>--port</option> <replaceable>PORT</replaceable>
+                </term>
+                <listitem>
+                    <para>
+                        Usa el puerto <replaceable>PORT</replaceable> para conectar al host. Por
+defecto, el puerto usado es el 22.
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>-d</option>,<option>--domain</option>
+<replaceable>DOMINIO</replaceable>
+                </term>
+                <listitem>
+                    <para>
+                        Busca las claves públicas del host en el dominio SSSD
+<replaceable>DOMAIN</replaceable>.
+                    </para>
+                </listitem>
+            </varlistentry>
+            <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/param_help.xml" />
+        </variablelist>
+    </refsect1>
+
+    <refsect1 id='exit_status'>
+        <title>EXIT STATUS</title>
+        <para>
+            In case of success, an exit value of 0 is returned. Otherwise, 1 is
+returned.
+        </para>
+    </refsect1>
+
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/seealso.xml" />
+
+</refentry>
+</reference>

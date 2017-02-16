@@ -1,0 +1,11 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${prefix}/lib/x86_64-linux-gnu
+includedir=${prefix}/include
+
+Name: sss_nss_idmap
+Description: NSS Responder ID-SID mapping interface
+Version: 1.11.7
+Libs: -L${libdir} -lsss_nss_idmap
+Cflags:
+URL: http://fedorahosted.org/sssd/

@@ -1,0 +1,7 @@
+cd321b731d3b7262e8c592c033d6b840  usr/lib/python2.7/dist-packages/SSSDConfig/__init__.py
+088aed7360f2ade6c7749d68ad31e156  usr/lib/python2.7/dist-packages/SSSDConfig/ipachangeconf.py
+921d5573f19d1588939351720fc746f1  usr/lib/python2.7/dist-packages/SSSDConfig/sssd_upgrade_config.py
+f4cde4311e3d5c90af2174fc184f021d  usr/lib/python2.7/dist-packages/pysss.so
+712df73184c5e4f2f9f2f093848b4b2f  usr/lib/python2.7/dist-packages/pysss_murmur.so
+33be9ae4ebbd14406771d7d5dc552c46  usr/share/doc/python-sss/changelog.Debian.gz
+13a01f8bcb4a56e1df65e43e01444c07  usr/share/doc/python-sss/copyright

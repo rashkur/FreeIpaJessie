@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE reference PUBLIC "-//OASIS//DTD DocBook V4.4//EN"
+"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<reference>
+<title>Páginas de manual de SSSD</title>
+<refentry>
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/upstream.xml" />
+
+    <refmeta>
+        <refentrytitle>sss_cache</refentrytitle>
+        <manvolnum>8</manvolnum>
+    </refmeta>
+
+    <refnamediv id='name'>
+        <refname>sss_cache</refname>
+        <refpurpose>lleva a cabo la limpieza del escondrijo</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv id='synopsis'>
+        <cmdsynopsis>
+<command>sss_cache</command> <arg choice='opt'>
+<replaceable>options</replaceable> </arg></cmdsynopsis>
+    </refsynopsisdiv>
+
+    <refsect1 id='description'>
+        <title>DESCRIPCION</title>
+        <para>
+            <command>sss_cache</command> invalida resgistros en el escondrijo SSSD. Los
+registros invalidados son forzados a recargarse desde el servidor tan pronto
+como el punto final SSSD relacionado está en línea.
+        </para>
+    </refsect1>
+
+    <refsect1 id='options'>
+        <title>OPCIONES</title>
+        <variablelist remap='IP'>
+            <varlistentry>
+                <term>
+                    <option>-E</option>,<option>--everything</option>
+                </term>
+                <listitem>
+                    <para>
+                        Invalidate all cached entries except for sudo rules.
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>-u</option>,<option>--user</option> <replaceable>login</replaceable>
+                </term>
+                <listitem>
+                    <para>
+                        Invalida el usuario específico.
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>-U</option>,<option>--users</option>
+                </term>
+                <listitem>
+                    <para>
+                        Invalida todos los registros de usuario. Esta opción anula la invalidación
+de usuario específico si también está fijada.
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>-g</option>,<option>--group</option>
+<replaceable>group</replaceable>
+                </term>
+                <listitem>
+                    <para>
+                        Invalida grupo específico.
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>-G</option>,<option>--groups</option>
+                </term>
+                <listitem>
+                    <para>
+                        Invalida todos los registros de grupo. Esta opción anula la invalidación de
+grupo específico si también está fijada.
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>-n</option>,<option>--netgroup</option>
+<replaceable>netgroup</replaceable>
+                </term>
+                <listitem>
+                    <para>
+                        Invalida grupo de red específico.
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>-N</option>,<option>--netgroups</option>
+                </term>
+                <listitem>
+                    <para>
+                        Invalida todos los registros de grupo de red. Esta opción anula la
+invalidación de grupo de red específico si también está fijada.
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>-s</option>,<option>--service</option>
+<replaceable>service</replaceable>
+                </term>
+                <listitem>
+                    <para>
+                        Invalida servicio específico
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>-S</option>,<option>--services</option>
+                </term>
+                <listitem>
+                    <para>
+                        Invalida todos los archivos de servicio. Esta opción anula la invalidación
+de servicio específico si también fue fijada.
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry condition="with_autofs">
+                <term>
+                    <option>-a</option>,<option>--autofs-map</option>
+<replaceable>autofs-map</replaceable>
+                </term>
+                <listitem>
+                    <para>
+                        Invalida mapas específicos autofs.
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry condition="with_autofs">
+                <term>
+                    <option>-A</option>,<option>--autofs-maps</option>
+                </term>
+                <listitem>
+                    <para>
+                        Invalida todos los mapas autofs. Esta opción anula la invalidación de mapa
+específico si fue fijada.
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>-d</option>,<option>--domain</option>
+<replaceable>domain</replaceable>
+                </term>
+                <listitem>
+                    <para>
+                        Restringe el proceso de invalidación sólo a un dominio concreto.
+                    </para>
+                </listitem>
+            </varlistentry>
+            <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/param_help.xml" />
+        </variablelist>
+    </refsect1>
+
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/seealso.xml" />
+
+</refentry>
+</reference>

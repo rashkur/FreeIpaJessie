@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE reference PUBLIC "-//OASIS//DTD DocBook V4.4//EN"
+"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<reference>
+<title>Pages de manuel de SSSD</title>
+<refentry>
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/upstream.xml" />
+
+    <refmeta>
+        <refentrytitle>sss_ssh_authorizedkeys</refentrytitle>
+        <manvolnum>1</manvolnum>
+    </refmeta>
+
+    <refnamediv id='name'>
+        <refname>sss_ssh_authorizedkeys</refname>
+        <refpurpose>obtient les clés OpenSSH autorisées</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv id='synopsis'>
+        <cmdsynopsis>
+<command>sss_ssh_authorizedkeys</command> <arg choice='opt'>
+<replaceable>options</replaceable> </arg> <arg
+choice='plain'><replaceable>USER</replaceable></arg></cmdsynopsis>
+    </refsynopsisdiv>
+
+    <refsect1 id='description'>
+        <title>DESCRIPTION</title>
+        <para>
+            <command>sss_ssh_authorizedkeys</command> acquiert les clés publiques SSH
+pour <replaceable>USER</replaceable> et les renvoie dans le format
+authorized_keys de OpenSSH (cf. la section <quote>FORMAT DE FICHIER
+AUTHORIZED_KEYS</quote> de <citerefentry><refentrytitle>sshd</refentrytitle>
+<manvolnum>8</manvolnum></citerefentry> pour plus d'informations).
+        </para>
+        <para>
+            <citerefentry><refentrytitle>sshd</refentrytitle>
+<manvolnum>8</manvolnum></citerefentry> peut être configuré pour utiliser
+<command>sss_ssh_authorizedkeys</command> pour l'authentification
+d'utilisateur par clé publique s'il est compilé avec la prise en compte des
+options <quote>AuthorizedKeysCommand</quote> ou <quote>PubkeyAgent</quote>
+de <citerefentry><refentrytitle>sshd_config</refentrytitle>
+<manvolnum>5</manvolnum></citerefentry>.
+        </para>
+        <para>
+            Si <quote>AuthorizedKeysCommand</quote> est pris en charge,
+<citerefentry><refentrytitle>sshd</refentrytitle>
+<manvolnum>8</manvolnum></citerefentry> peut être configuré pour l'utiliser
+en mettant la directive suivante dans
+<citerefentry><refentrytitle>sshd_config</refentrytitle>
+<manvolnum>5</manvolnum></citerefentry> : <programlisting>
+AuthorizedKeysCommand /usr/bin/sss_ssh_authorizedkeys
+</programlisting>
+        </para>
+        <para>
+            Si <quote>PubkeyAgent</quote> est pris en charge,
+<citerefentry><refentrytitle>sshd</refentrytitle>
+<manvolnum>8</manvolnum></citerefentry> peut être configuré pour l'utiliser
+en utilisant la directive suivante de la configuration de
+<citerefentry><refentrytitle>sshd</refentrytitle>
+<manvolnum>8</manvolnum></citerefentry> : <programlisting>
+PubKeyAgent /usr/bin/sss_ssh_authorizedkeys %u
+</programlisting>
+        </para>
+    </refsect1>
+
+    <refsect1 id='options'>
+        <title>OPTIONS</title>
+        <variablelist remap='IP'>
+            <varlistentry>
+                <term>
+                    <option>-d</option>,<option>--domain</option>
+<replaceable>DOMAINE</replaceable>
+                </term>
+                <listitem>
+                    <para>
+                        Rechercher des clés publiques dans le domaine SSSD
+<replaceable>DOMAIN</replaceable>.
+                    </para>
+                </listitem>
+            </varlistentry>
+            <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/param_help.xml" />
+        </variablelist>
+    </refsect1>
+
+    <refsect1 id='exit_status'>
+        <title>CODE RETOUR</title>
+        <para>
+            Dans le cas d'un opération achevée avec succès, une valeur de retour de 0
+est renvoyée. Dans le cas contraire, 1 est renvoyé.
+        </para>
+    </refsect1>
+
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/seealso.xml" />
+
+</refentry>
+</reference>

@@ -1,0 +1,813 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE reference PUBLIC "-//OASIS//DTD DocBook V4.4//EN"
+"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<reference>
+<title>SSSD Manual pages</title>
+<refentry>
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/upstream.xml" />
+
+    <refmeta>
+        <refentrytitle>sssd-ipa</refentrytitle>
+        <manvolnum>5</manvolnum>
+        <refmiscinfo class="manual">File Formats and Conventions</refmiscinfo>
+    </refmeta>
+
+    <refnamediv id='name'>
+        <refname>sssd-ipa</refname>
+        <refpurpose>the configuration file for SSSD</refpurpose>
+    </refnamediv>
+
+    <refsect1 id='description'>
+        <title>DESCRIPTION</title>
+        <para>
+            This manual page describes the configuration of the IPA provider
+            for
+            <citerefentry>
+                <refentrytitle>sssd</refentrytitle>
+                <manvolnum>8</manvolnum>
+            </citerefentry>.
+            For a detailed syntax reference, refer to the <quote>FILE FORMAT</quote> section of the
+            <citerefentry>
+                <refentrytitle>sssd.conf</refentrytitle>
+                <manvolnum>5</manvolnum>
+            </citerefentry> manual page.
+        </para>
+        <para>
+            The IPA provider is a back end used to connect to an IPA server.
+            (Refer to the freeipa.org web site for information about IPA servers.)
+            This provider requires that the machine be joined to the IPA domain;
+            configuration is almost entirely self-discovered and obtained
+            directly from the server.
+        </para>
+        <para>
+            The IPA provider accepts the same options used by the
+            <citerefentry>
+                <refentrytitle>sssd-ldap</refentrytitle>
+                <manvolnum>5</manvolnum>
+            </citerefentry> identity provider and the
+            <citerefentry>
+                <refentrytitle>sssd-krb5</refentrytitle>
+                <manvolnum>5</manvolnum>
+            </citerefentry> authentication provider with some exceptions described
+            below.
+        </para>
+        <para>
+            However, it is neither necessary nor recommended to set these options.
+            IPA provider can also be used as an access and chpass provider. As an
+            access provider it uses HBAC (host-based access control) rules. Please
+            refer to freeipa.org for more information about HBAC. No configuration
+            of access provider is required on the client side.
+        </para>
+        <para>
+            The IPA provider will use the PAC responder if the Kerberos tickets
+            of users from trusted realms contain a PAC. To make configuration
+            easier the PAC responder is started automatically if the IPA ID
+            provider is configured.
+        </para>
+    </refsect1>
+
+    <refsect1 id='file-format'>
+        <title>CONFIGURATION OPTIONS</title>
+        <para>Refer to the section <quote>DOMAIN SECTIONS</quote> of the
+            <citerefentry>
+                <refentrytitle>sssd.conf</refentrytitle>
+                <manvolnum>5</manvolnum>
+            </citerefentry> manual page for details on the configuration of an SSSD domain.
+            <variablelist>
+                <varlistentry>
+                    <term>ipa_domain (string)</term>
+                    <listitem>
+                        <para>
+                            Specifies the name of the IPA domain.
+                            This is optional. If not provided, the configuration
+                            domain name is used.
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>ipa_server, ipa_backup_server (string)</term>
+                    <listitem>
+                        <para>
+                            The comma-separated list of IP addresses or hostnames of the
+                            IPA servers to which SSSD should connect in
+                            the order of preference. For more information
+                            on failover and server redundancy, see the
+                            <quote>FAILOVER</quote> section.
+                            This is optional if autodiscovery is enabled.
+                            For more information on service discovery, refer
+                            to the <quote>SERVICE DISCOVERY</quote> section.
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>ipa_hostname (string)</term>
+                    <listitem>
+                        <para>
+                            Optional. May be set on machines where the
+                            hostname(5) does not reflect the fully qualified
+                            name used in the IPA domain to identify this host.
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>dyndns_update (boolean)</term>
+                    <listitem>
+                        <para>
+                            Optional. This option tells SSSD to automatically
+                            update the DNS server built into FreeIPA v2 with
+                            the IP address of this client. The update is
+                            secured using GSS-TSIG. The IP address of the IPA
+                            LDAP connection is used for the updates, if it is
+                            not otherwise specified by using the
+                            <quote>dyndns_iface</quote> option.
+                        </para>
+                        <para>
+                            NOTE: On older systems (such as RHEL 5), for this
+                            behavior to work reliably, the default Kerberos
+                            realm must be set properly in /etc/krb5.conf
+                        </para>
+                        <para>
+                            NOTE: While it is still possible to use the old
+                            <emphasis>ipa_dyndns_update</emphasis> option, users
+                            should migrate to using <emphasis>dyndns_update</emphasis>
+                            in their config file.
+                        </para>
+                        <para>
+                            Default: false
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>dyndns_ttl (integer)</term>
+                    <listitem>
+                        <para>
+                            The TTL to apply to the client DNS record when updating it.
+                            If dyndns_update is false this has no effect. This will
+                            override the TTL serverside if set by an administrator.
+                        </para>
+                        <para>
+                            NOTE: While it is still possible to use the old
+                            <emphasis>ipa_dyndns_ttl</emphasis> option, users
+                            should migrate to using <emphasis>dyndns_ttl</emphasis>
+                            in their config file.
+                        </para>
+                        <para>
+                            Default: 1200 (seconds)
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>dyndns_iface (string)</term>
+                    <listitem>
+                        <para>
+                            Optional. Applicable only when dyndns_update
+                            is true. Choose the interface whose IP address
+                            should be used for dynamic DNS updates.
+                        </para>
+                        <para>
+                            NOTE: While it is still possible to use the old
+                            <emphasis>ipa_dyndns_iface</emphasis> option, users
+                            should migrate to using <emphasis>dyndns_iface</emphasis>
+                            in their config file.
+                        </para>
+                        <para>
+                            Default: Use the IP address of the IPA LDAP connection
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>ipa_enable_dns_sites (boolean)</term>
+                    <listitem>
+                        <para>
+                            Enables DNS sites - location based
+                            service discovery.
+                        </para>
+                        <para>
+                            If true and service discovery (see Service
+                            Discovery paragraph at the bottom of the man page)
+                            is enabled, then the SSSD will first attempt
+                            location based discovery using a query that contains
+                            "_location.hostname.example.com" and then fall back
+                            to traditional SRV discovery. If the location based
+                            discovery succeeds, the IPA servers located with
+                            the location based discovery are treated as primary
+                            servers and the IPA servers located using the
+                            traditional SRV discovery are used as back up
+                            servers
+                        </para>
+                        <para>
+                            Default: false
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>dyndns_refresh_interval (integer)</term>
+                    <listitem>
+                        <para>
+                            How often should the back end perform periodic DNS update in
+                            addition to the automatic update performed when the back end
+                            goes online.
+                            This option is optional and applicable only when dyndns_update
+                            is true.
+                        </para>
+                        <para>
+                            Default: 0 (disabled)
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>dyndns_update_ptr (bool)</term>
+                    <listitem>
+                        <para>
+                            Whether the PTR record should also be explicitly
+                            updated when updating the client's DNS records.
+                            Applicable only when dyndns_update is true.
+                        </para>
+                        <para>
+                            This option should be False in most IPA
+                            deployments as the IPA server generates the
+                            PTR records automatically when forward records
+                            are changed.
+                        </para>
+                        <para>
+                            Default: False (disabled)
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>dyndns_force_tcp (bool)</term>
+                    <listitem>
+                        <para>
+                            Whether the nsupdate utility should default to using
+                            TCP for communicating with the DNS server.
+                        </para>
+                        <para>
+                            Default: False (let nsupdate choose the protocol)
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>ipa_hbac_search_base (string)</term>
+                    <listitem>
+                        <para>
+                            Optional. Use the given string as search base for
+                            HBAC related objects.
+                        </para>
+                        <para>
+                            Default: Use base DN
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>ipa_host_search_base (string)</term>
+                    <listitem>
+                        <para>
+                            Optional. Use the given string as search base for
+                            host objects.
+                        </para>
+                        <para>
+                            See <quote>ldap_search_base</quote> for
+                            information about configuring multiple search
+                            bases.
+                        </para>
+                        <para>
+                            If filter is given in any of search bases and
+                            <emphasis>ipa_hbac_support_srchost</emphasis>
+                            is set to False, the filter will be ignored.
+                        </para>
+                        <para>
+                            Default: the value of
+                            <emphasis>ldap_search_base</emphasis>
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>ipa_selinux_search_base (string)</term>
+                    <listitem>
+                        <para>
+                            Optional. Use the given string as search base for
+                            SELinux user maps.
+                        </para>
+                        <para>
+                            See <quote>ldap_search_base</quote> for
+                            information about configuring multiple search
+                            bases.
+                        </para>
+                        <para>
+                            Default: the value of
+                            <emphasis>ldap_search_base</emphasis>
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>ipa_subdomains_search_base (string)</term>
+                    <listitem>
+                        <para>
+                            Optional. Use the given string as search base for
+                            trusted domains.
+                        </para>
+                        <para>
+                            See <quote>ldap_search_base</quote> for
+                            information about configuring multiple search
+                            bases.
+                        </para>
+                        <para>
+                            Default: the value of
+                            <emphasis>cn=trusts,%basedn</emphasis>
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>ipa_master_domain_search_base (string)</term>
+                    <listitem>
+                        <para>
+                            Optional. Use the given string as search base for
+                            master domain object.
+                        </para>
+                        <para>
+                            See <quote>ldap_search_base</quote> for
+                            information about configuring multiple search
+                            bases.
+                        </para>
+                        <para>
+                            Default: the value of
+                            <emphasis>cn=ad,cn=etc,%basedn</emphasis>
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>krb5_validate (boolean)</term>
+                    <listitem>
+                        <para>
+                            Verify with the help of krb5_keytab that the TGT
+                            obtained has not been spoofed.
+                        </para>
+                        <para>
+                            Default: true
+                        </para>
+                        <para>
+                             Note that this default differs from the
+                             traditional Kerberos provider back end.
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>krb5_realm (string)</term>
+                    <listitem>
+                        <para>
+                            The name of the Kerberos realm. This is optional and
+                            defaults to the value of <quote>ipa_domain</quote>.
+                        </para>
+                        <para>
+                            The name of the Kerberos realm has a special
+                            meaning in IPA - it is converted into the base
+                            DN to use for performing LDAP operations.
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>krb5_canonicalize (boolean)</term>
+                    <listitem>
+                        <para>
+                            Specifies if the host and user principal should be
+                            canonicalized when connecting to IPA LDAP and also for AS
+                            requests. This feature is available with MIT
+                            Kerberos >= 1.7
+                        </para>
+
+                        <para>
+                            Default: true
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>krb5_use_fast (string)</term>
+                    <listitem>
+                        <para>
+                            Enables flexible authentication secure tunneling
+                            (FAST) for Kerberos pre-authentication. The
+                            following options are supported:
+                        </para>
+                        <para>
+                            <emphasis>never</emphasis> use FAST.
+                        </para>
+                        <para>
+                            <emphasis>try</emphasis> to use FAST. If the server
+                            does not support FAST, continue the
+                            authentication without it. This is
+                            equivalent to not setting this option at all.
+                        </para>
+                        <para>
+                            <emphasis>demand</emphasis> to use FAST. The
+                            authentication fails if the server does not
+                            require fast.
+                        </para>
+                        <para>
+                            Default: try
+                        </para>
+                        <para>
+                            NOTE: SSSD supports FAST only with
+                            MIT Kerberos version 1.8 and later. If SSSD is used
+                            with an older version of MIT Kerberos, using this
+                            option is a configuration error.
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>ipa_hbac_refresh (integer)</term>
+                    <listitem>
+                        <para>
+                            The amount of time between lookups of the HBAC
+                            rules against the IPA server. This will reduce the
+                            latency and load on the IPA server if there are
+                            many access-control requests made in a short
+                            period.
+                        </para>
+                        <para>
+                            Default: 5 (seconds)
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>ipa_hbac_selinux (integer)</term>
+                    <listitem>
+                        <para>
+                            The amount of time between lookups of the SELinux
+                            maps against the IPA server. This will reduce the
+                            latency and load on the IPA server if there are
+                            many user login requests made in a short
+                            period.
+                        </para>
+                        <para>
+                            Default: 5 (seconds)
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>ipa_hbac_treat_deny_as (string)</term>
+                    <listitem>
+                        <para>
+                            This option specifies how to treat the deprecated
+                            DENY-type HBAC rules. As of FreeIPA v2.1, DENY
+                            rules are no longer supported on the server. All
+                            users of FreeIPA will need to migrate their rules
+                            to use only the ALLOW rules. The client will
+                            support two modes of operation during this
+                            transition period:
+                        </para>
+                        <para>
+                            <emphasis>DENY_ALL</emphasis>: If any HBAC DENY
+                            rules are detected, all users will be denied
+                            access.
+                        </para>
+                        <para>
+                            <emphasis>IGNORE</emphasis>: SSSD will ignore any
+                            DENY rules. Be very careful with this option, as
+                            it may result in opening unintended access.
+                        </para>
+                        <para>
+                            Default: DENY_ALL
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>ipa_hbac_support_srchost (boolean)</term>
+                    <listitem>
+                        <para>
+                            If this is set to false, then srchost as given
+                            to SSSD by PAM will be ignored.
+                        </para>
+                        <para>
+                            Note that if set to <emphasis>False</emphasis>,
+                            this option casuses filters given in
+                            <emphasis>ipa_host_search_base</emphasis> to be ignored;
+                        </para>
+                        <para>
+                            Default: false
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>ipa_server_mode (boolean)</term>
+                    <listitem>
+                        <para>
+                            This option should only be set by the IPA
+                            installer.
+                        </para>
+                        <para>
+                            The option denotes that the SSSD is running on
+                            IPA server and should perform lookups of users
+                            and groups from trusted domains differently.
+                        </para>
+                        <para>
+                            Default: false
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry condition="with_autofs">
+                    <term>ipa_automount_location (string)</term>
+                    <listitem>
+                        <para>
+                            The automounter location this IPA client will be using
+                        </para>
+                        <para>
+                            Default: The location named "default"
+                        </para>
+                        <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/autofs_restart.xml" />
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>ipa_netgroup_member_of (string)</term>
+                    <listitem>
+                        <para>
+                            The LDAP attribute that lists netgroup's
+                            memberships.
+                        </para>
+                        <para>
+                            Default: memberOf
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>ipa_netgroup_member_user (string)</term>
+                    <listitem>
+                        <para>
+                            The LDAP attribute that lists system users
+                            and groups that are direct members of the
+                            netgroup.
+                        </para>
+                        <para>
+                            Default: memberUser
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>ipa_netgroup_member_host (string)</term>
+                    <listitem>
+                        <para>
+                            The LDAP attribute that lists hosts and host groups
+                            that are direct members of the netgroup.
+                        </para>
+                        <para>
+                            Default: memberHost
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>ipa_netgroup_member_ext_host (string)</term>
+                    <listitem>
+                        <para>
+                            The LDAP attribute that lists FQDNs of hosts
+                            and host groups that are members of the netgroup.
+                        </para>
+                        <para>
+                            Default: externalHost
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>ipa_netgroup_domain (string)</term>
+                    <listitem>
+                        <para>
+                            The LDAP attribute that contains NIS domain
+                            name of the netgroup.
+                        </para>
+                        <para>
+                            Default: nisDomainName
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>ipa_host_object_class (string)</term>
+                    <listitem>
+                        <para>
+                            The object class of a host entry in LDAP.
+                        </para>
+                        <para>
+                            Default: ipaHost
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>ipa_host_fqdn (string)</term>
+                    <listitem>
+                        <para>
+                            The LDAP attribute that contains FQDN of the host.
+                        </para>
+                        <para>
+                            Default: fqdn
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>ipa_selinux_usermap_object_class (string)</term>
+                    <listitem>
+                        <para>
+                            The object class of a host entry in LDAP.
+                        </para>
+                        <para>
+                            Default: ipaHost
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>ipa_selinux_usermap_name (string)</term>
+                    <listitem>
+                        <para>
+                            The LDAP attribute that contains the name
+                            of SELinux usermap.
+                        </para>
+                        <para>
+                            Default: cn
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>ipa_selinux_usermap_member_user (string)</term>
+                    <listitem>
+                        <para>
+                            The LDAP attribute that contains all users / groups
+                            this rule match against.
+                        </para>
+                        <para>
+                            Default: memberUser
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>ipa_selinux_usermap_member_host (string)</term>
+                    <listitem>
+                        <para>
+                            The LDAP attribute that contains all hosts / hostgroups
+                            this rule match against.
+                        </para>
+                        <para>
+                            Default: memberHost
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>ipa_selinux_usermap_see_also (string)</term>
+                    <listitem>
+                        <para>
+                            The LDAP attribute that contains DN of HBAC
+                            rule which can be used for matching instead
+                            of memberUser and memberHost
+                        </para>
+                        <para>
+                            Default: seeAlso
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>ipa_selinux_usermap_selinux_user (string)</term>
+                    <listitem>
+                        <para>
+                            The LDAP attribute that contains SELinux user
+                            string itself.
+                        </para>
+                        <para>
+                            Default: ipaSELinuxUser
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>ipa_selinux_usermap_enabled (string)</term>
+                    <listitem>
+                        <para>
+                            The LDAP attribute that contains whether
+                            or not is user map enabled for usage.
+                        </para>
+                        <para>
+                            Default: ipaEnabledFlag
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>ipa_selinux_usermap_user_category (string)</term>
+                    <listitem>
+                        <para>
+                            The LDAP attribute that contains user category
+                            such as 'all'.
+                        </para>
+                        <para>
+                            Default: userCategory
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>ipa_selinux_usermap_host_category (string)</term>
+                    <listitem>
+                        <para>
+                            The LDAP attribute that contains host category
+                            such as 'all'.
+                        </para>
+                        <para>
+                            Default: hostCategory
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>ipa_selinux_usermap_uuid (string)</term>
+                    <listitem>
+                        <para>
+                            The LDAP attribute that contains unique ID
+                            of the user map.
+                        </para>
+                        <para>
+                            Default: ipaUniqueID
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry condition="with_ssh">
+                    <term>ipa_host_ssh_public_key (string)</term>
+                    <listitem>
+                        <para>
+                            The LDAP attribute that contains the host's SSH
+                            public keys.
+                        </para>
+                        <para>
+                            Default: ipaSshPubKey
+                        </para>
+                    </listitem>
+                </varlistentry>
+            </variablelist>
+        </para>
+    </refsect1>
+
+    <refsect1 id='subdomains_provider'>
+        <title>SUBDOMAINS PROVIDER</title>
+        <para>
+            The IPA subdomains provider behaves slightly differently
+            if it is configured explicitly or implicitly.
+        </para>
+        <para>
+            If the option 'subdomains_provider = ipa' is found in the
+            domain section of sssd.conf, the IPA subdomains provider is
+            configured explicitly, and all subdomain requests are sent to the
+            IPA server if necessary.
+        </para>
+        <para>
+            If the option 'subdomains_provider' is not set in the domain
+            section of sssd.conf but there is the option 'id_provider = ipa',
+            the IPA subdomains provider is configured implicitly. In this case,
+            if a subdomain request fails and indicates that the server does not
+            support subdomains, i.e. is not configured for trusts, the IPA
+            subdomains provider is disabled. After an hour or after the IPA
+            provider goes online, the subdomains provider is enabled again.
+        </para>
+    </refsect1>
+
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/failover.xml" />
+
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/service_discovery.xml" />
+
+    <refsect1 id='example'>
+        <title>EXAMPLE</title>
+        <para>
+            The following example assumes that SSSD is correctly
+            configured and example.com is one of the domains in the
+            <replaceable>[sssd]</replaceable> section. This examples shows only
+            the ipa provider-specific options.
+        </para>
+        <para>
+<programlisting>
+    [domain/example.com]
+    id_provider = ipa
+    ipa_server = ipaserver.example.com
+    ipa_hostname = myhost.example.com
+</programlisting>
+        </para>
+    </refsect1>
+
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/seealso.xml" />
+
+</refentry>
+</reference>

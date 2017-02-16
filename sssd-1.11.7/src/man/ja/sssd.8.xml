@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE reference PUBLIC "-//OASIS//DTD DocBook V4.4//EN"
+"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<reference>
+<title>SSSD マニュアル ページ</title>
+<refentry>
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/upstream.xml" />
+
+    <refmeta>
+        <refentrytitle>sssd</refentrytitle>
+        <manvolnum>8</manvolnum>
+    </refmeta>
+
+    <refnamediv id='name'>
+        <refname>sssd</refname>
+        <refpurpose>System Security Services Daemon</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv id='synopsis'>
+        <cmdsynopsis>
+<command>sssd</command> <arg choice='opt'>
+<replaceable>options</replaceable> </arg></cmdsynopsis>
+    </refsynopsisdiv>
+
+    <refsect1 id='description'>
+        <title>概要</title>
+        <para>
+            <command>SSSD</command>
+はリモートディレクトリーへのアクセスと認証メカニズムを管理するための一組のデーモンを提供します。システムへの NSS と PAM
+インターフェースを提供します。また、D-Bus
+インターフェースのように複数の異なるアカウントソースに接続するための取り外し可能なバックエンドシステムを提供します。クライアント監査、およびFreeIPA
+のようなプロジェクトに対するポリシーサービスを提供する基礎となります。ローカルユーザーだけでなく拡張ユーザーデータを保存するためのより強靭なデータベースを提供します。
+        </para>
+    </refsect1>
+
+    <refsect1 id='options'>
+        <title>オプション</title>
+        <variablelist remap='IP'>
+            <varlistentry>
+                <term>
+                    <option>-d</option>,<option>--debug-level</option>
+<replaceable>LEVEL</replaceable>
+                </term>
+                <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/debug_levels.xml" />
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>--debug-timestamps=</option><replaceable>mode</replaceable>
+                </term>
+                <listitem>
+                    <para>
+                        <emphasis>1</emphasis>: デバッグメッセージに日時を追加します
+                    </para>
+                    <para>
+                        <emphasis>0</emphasis>: デバッグメッセージで日時を無効にします
+                    </para>
+                    <para>
+                        初期値: 1
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>--debug-microseconds=</option><replaceable>mode</replaceable>
+                </term>
+                <listitem>
+                    <para>
+                        <emphasis>1</emphasis>: デバッグメッセージにミリ秒をタイムスタンプに追加します
+                    </para>
+                    <para>
+                        <emphasis>0</emphasis>: 日時でマイクロ秒を無効にします
+                    </para>
+                    <para>
+                        初期値: 0
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>-f</option>,<option>--debug-to-files</option>
+                </term>
+                <listitem>
+                    <para>
+                        デバッグ出力を標準エラーの代わりにファイルに送信します。初期状態で、ログファイルは <filename>/var/log/sssd</filename>
+に保存され、すべての SSSD サービスとドメインに対して別々のログファイルがあります。
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>-D</option>,<option>--daemon</option>
+                </term>
+                <listitem>
+                    <para>
+                        起動後にデーモンになります。
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>-i</option>,<option>--interactive</option>
+                </term>
+                <listitem>
+                    <para>
+                        フォアグラウンドで実行して、デーモンになりません。
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>-c</option>,<option>--config</option>
+                </term>
+                <listitem>
+                    <para>
+                        非標準の設定ファイルを指定します。初期値は <filename>/etc/sssd/sssd.conf</filename>
+です。設定ファイルの構文とオプションは <citerefentry> <refentrytitle>sssd.conf</refentrytitle>
+<manvolnum>5</manvolnum> </citerefentry> マニュアルページを参照してください。
+                    </para>
+                </listitem>
+            </varlistentry>
+            <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/param_help.xml" />
+            <varlistentry>
+                <term>
+                    <option>--version</option>
+                </term>
+                <listitem>
+                    <para>
+                        バージョン番号を表示して終了します。
+                    </para>
+                </listitem>
+            </varlistentry>
+        </variablelist>
+    </refsect1>
+
+    <refsect1>
+        <title>シグナル</title>
+        <variablelist remap='IP'>
+            <varlistentry>
+                <term>SIGTERM/SIGINT</term>
+                <listitem>
+                    <para>
+                        SSSD にすべての子プロセスを穏やかに停止するよう通知して、モニターをシャットダウンします。
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>SIGHUP</term>
+                <listitem>
+                    <para>
+                        SSSD が現在のデバッグファイルディスクリプターに書き込むことを止めて、それらを閉じてから開きなおすよう指示します。これは logrotate
+のようなプログラムを用いてログローテーションを促進することを意味します。
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>SIGUSR1</term>
+                <listitem>
+                    <para>
+                        SSSD に 1 分間オフライン操作をシミュレーションするよう指示します。テスト目的のためにほぼ有用です。
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>SIGUSR2</term>
+                <listitem>
+                    <para>
+                        SSSD に直ちにオンラインになるよう指示します。テスト目的のためにほぼ有用です。
+                    </para>
+                </listitem>
+            </varlistentry>
+        </variablelist>
+    </refsect1>
+
+    <refsect1 id='notes'>
+        <title>注記</title>
+        <variablelist remap='IP'>
+            <varlistentry>
+                <term>Environment variable SSS_NSS_USE_MEMCACHE</term>
+                <listitem>
+                    <para>
+                        If the environment variable SSS_NSS_USE_MEMCACHE is set to "NO", client
+applications will not use the fast in-memory cache.
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>Amount of time SSSD spends in offline mode</term>
+                <listitem>
+                    <para>
+                        When SSSD switches to offline mode, the amount of time before it tries to go
+back online will increase based upon the time spent disconnected.  This
+value is in seconds and calculated by the following:
+                    </para>
+                    <para>
+                        60 + random_offset
+                    </para>
+                    <para>
+                        The random offset can increment up to 30 seconds.  After each unsuccessful
+attempt to go online, the new interval is recalculated by the following:
+                    </para>
+                    <para>
+                        new_interval = old_interval*2 + random_offset
+                    </para>
+                    <para>
+                        Note that the maximum length of each interval is currently limited to one
+hour. If the calculated length of new_interval is greater than an hour, it
+will be forced to one hour.
+                    </para>
+                </listitem>
+            </varlistentry>
+        </variablelist>
+
+    </refsect1>
+
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/seealso.xml" />
+
+</refentry>
+</reference>

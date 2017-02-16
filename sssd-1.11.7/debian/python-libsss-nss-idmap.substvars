@@ -1,0 +1,5 @@
+python:Versions=2.7
+python:Provides=python2.7-libsss-nss-idmap
+python:Depends=python (>= 2.7), python (<< 2.8)
+shlibs:Depends=libc6 (>= 2.4), libpython2.7 (>= 2.7), libsss-nss-idmap0
+misc:Depends=

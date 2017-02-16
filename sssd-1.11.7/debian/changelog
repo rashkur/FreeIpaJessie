@@ -1,0 +1,577 @@
+sssd (1.11.7-3) unstable; urgency=medium
+
+  * libsss-sudo.postrm: Delete sudoers line from nsswitch.conf, if only
+    files source left. (Closes: #749722)
+  * libsss-sudo.postinst: Fix comments.
+  * libsss-sudo.postinst: Check nsswitch sudoers entry unconditionally,
+    so that it is added on upgrade too if missing.
+
+ -- Timo Aaltonen <tjaalton@debian.org>  Fri, 16 Jan 2015 13:53:22 +0200
+
+sssd (1.11.7-2) unstable; urgency=medium
+
+  * default, upstart.in: Upstream ticket #2312 is fixed now, so drop the
+    workaround to run the daemon in the foreground. (Closes: #760353)
+  * fix-automake-compat.diff: Added an upstream commit to fix configure
+    with new automake.
+  * fix-catchchild.diff: Fix build failure with samba 4.1.13, bump
+    samba-dev build-dependency to match.
+
+ -- Timo Aaltonen <tjaalton@debian.org>  Thu, 30 Oct 2014 14:49:05 +0200
+
+sssd (1.11.7-1) unstable; urgency=medium
+
+  * New upstream release.
+  * sssd-common.install, sssd-dbus.install: Add new sss_signal helper
+    and the dbus service using it.
+  * fix-obsolete-target.diff: Drop syslog.target from the service file.
+  * libnss-sss.post*: Add sss entry to shadow and services on
+    nsswitch.conf. (Closes: #761173)
+
+ -- Timo Aaltonen <tjaalton@debian.org>  Wed, 24 Sep 2014 07:08:04 +0300
+
+sssd (1.11.6-1) unstable; urgency=medium
+
+  * New upstream release.
+  * control: Update my email.
+  * control: Update vcs urls.
+  * libnss-sss.postrm: Check DPKG_MAINTSCRIPT_PACKAGE_REFCOUNT before
+    removing sss entry from nsswitch.conf. (Closes: #748671)
+  * libpam-sss.prerm: Check DPKG_MAINTSCRIPT_PACKAGE_REFCOUNT before
+    running pam-auth-update --remove.
+  * control: Mark libkeyutils-dev, libselinux-dev, libsemanage-dev,
+    libnl*-dev build-deps as linux-any, as a preliminary step to build
+    on kfreebsd-*.
+  * Run wrap-and-sort.
+  * sssd-dbus: Add a new subpackage for the D-Bus responder.
+  * control: Demote libsasl2-modules-ldap to Suggests for sssd-ldap.
+  * generate-config: Bring it back for convenience, but don't run it on
+    postinst.
+  * sssd-common.postinst: Remove obsolete config upgrade.
+
+ -- Timo Aaltonen <tjaalton@debian.org>  Tue, 19 Aug 2014 09:15:13 +0300
+
+sssd (1.11.5.1-2) unstable; urgency=medium
+
+  * control: Drop libcmocka-dev and check from build-depends again so
+    that the package will build on every arch. Test failures will be
+    fixed in a future upload.
+
+ -- Timo Aaltonen <tjaalton@debian.org>  Thu, 14 Aug 2014 02:22:57 +0300
+
+sssd (1.11.5.1-1) unstable; urgency=medium
+
+  [ Stéphane Graber ]
+  * Fix upstart job to provide a proper stdin for sssd.
+  * Update defaults to always pass -i.
+
+  [ Timo Aaltonen ]
+  * New upstream release. (Closes: #745664)
+  * control: Bump libkrb5-dev build-dependency to 1.12 due to the OTP
+    features.
+
+ -- Timo Aaltonen <tjaalton@ubuntu.com>  Fri, 09 May 2014 14:50:12 +0300
+
+sssd (1.11.5-1) unstable; urgency=medium
+
+  * New upstream bugfix release. (Closes: #729982)
+  * upstart: Run the daemon in foreground and drop expect fork from the
+    job, should fix issues with upstart getting confused when a backend
+    fails to start.
+
+ -- Timo Aaltonen <tjaalton@ubuntu.com>  Tue, 08 Apr 2014 23:39:20 +0300
+
+sssd (1.11.4-1) unstable; urgency=low
+
+  * New upstream release.
+  * control, rules: Add libcmocka-dev and re-add check to build-depends.
+    Override dh_auto_test so that it shows the test error log if they fail.
+  * rules: Fix the manpage date handling with a bigger hammer, and
+    enable it for all manpages not just pam_sss.8. (Closes: #734083)
+  * Drop an obsolete lintian override from libsss-sudo.
+
+ -- Timo Aaltonen <tjaalton@ubuntu.com>  Fri, 21 Mar 2014 13:28:38 +0200
+
+sssd (1.11.3-1) unstable; urgency=low
+
+  * New upstream release.
+  * control: Update policy to 3.9.5, no changes.
+
+ -- Timo Aaltonen <tjaalton@ubuntu.com>  Fri, 03 Jan 2014 00:01:29 +0200
+
+sssd (1.11.2-1) unstable; urgency=low
+
+  * New upstream release.
+  * rules, sssd-common.install: Use the correct path for the systemd
+    service file.
+  * control: Build depend on libpam0g-dev | libpam-dev.
+
+ -- Timo Aaltonen <tjaalton@ubuntu.com>  Tue, 19 Nov 2013 15:22:27 +0200
+
+sssd (1.11.1-1) unstable; urgency=low
+
+  * New upstream release.
+  * sssd-common.postinst, generate-config: Don't create a config on install,
+    drop generate-config. (Closes: #717587)
+  * sssd-common.postrm: Remove /etc/apparmor.d too, if empty.
+  * control, rules, sssd-common.install: Install the systemd service
+    file provided by upstream.
+  * control: Drop M-A: foreign from sssd-* and add back to sssd instead.
+  * control: Don't hardcode 'multiarch-support'.
+  * control: Drop unnecessary multiarch declarations.
+  * control: Drop obsolete Breaks/Conflicts.
+  * rules: Enable parallel build.
+  * control: Add libltdl-dev to build-depends.
+  * control: Prepare for new unified samba package, adjust build-
+    dependencies. Thanks, Ivo De Decker! (Closes: #725992)
+
+ -- Timo Aaltonen <tjaalton@ubuntu.com>  Tue, 06 Aug 2013 17:04:28 +0300
+
+sssd (1.10.0-1) unstable; urgency=low
+
+  [ Timo Aaltonen ]
+  * New upstream release (Closes: #693054, #705357, #711101)
+  * Update the packaging for the new version, thanks Esko Järnfors!
+    - Add libsss-idmap0, libsss-idmap-dev packages
+    - Add sssd Depends on libsss-idmap0
+    - Add /var/lib/sss/mc directory for the new mmap cache
+  * Split authentication providers to separate packages and make sssd
+    a metapackage.
+  * control: Drop libunistring-dev from build-depends and add libglib2.0-dev
+    for unicode support.
+  * sssd-*.install: Install new manpages.
+  * python-sss.install: py-files got moved under SSSDConfig.
+  * control, rules: Use default build flags, bump dpkg-dev build-dep to
+    1.16.1~.
+  * rules: Install the apparmor profile with -m644.
+  * python-sss: Add pysss_murmur.so.
+  * rules, control, sssd-ad-common.install: PAC responder support.
+    - Add libndr-dev, libndr-standard-dev, libsamba-util-dev, samba4-dev,
+      libdcerpc-dev to build-depends
+    - Add -I/usr/include/samba-4.0 to CFLAGS
+  * control: Mark sssd-common as Multi-Arch: foreign.
+  * watch: Add a comment about the upstream git tree.
+  * Replace perl snippet from libnss-sss.post* with sed, drop perl from
+    Depends. (Closes: #686237)
+  * compat: Bump compat to 9.
+  * rules: Set DEB_HOST_MULTIARCH, drop --libdir and remnants of cdbs.
+  * sssd-common.install: Install the support binaries under the multiarch path.
+  * rules,sssd-common.postinst: Move generate-config to /usr/share/sssd.
+  * rules, sssd-common.install: Use the correct install path for the
+    krb5_locator plugin.
+  * libnss-sss.postinst: SSSD doesn't handle shadow maps, so don't pretend
+    that it would.
+  * libsss-sudo*, control: Remove the soname from the library, move .so to
+    the libsss-sudo, drop -dev package.
+  * rules: Pass --datadir, so the path in autogenerated python files is
+    correctly substituted. (LP: #1079938)
+  * sssd-krb5-common.dirs: Add krb5 include dir.
+  * fix-cve-2013-0219*.diff, -0220.diff: Dropped, included upstream.
+  * libsss-sudo.postrm: Run ldconfig on remove/purge.
+  * apparmor-profile: Fix the profile to use the multiarch path for it's
+    helper location (LP: #1175317).
+  * Add packaging for libsss-nss-idmap0, libsss-nss-idmap-dev,
+    python-libsss-nss-idmap.
+  * watch: Updated to work with alpha/beta releases.
+  * control: Migrate to libnl-3 now that it's supported. (Closes: #688174)
+  * sssd-common.{preinst,postrm}: Install the apparmor profile in force-complain
+    mode on install, and remove the profile directory on purge (if empty). Also
+    migrate from previous setup which installed it as disabled.
+    (Closes: #676140)
+  * control: Bump policy to 3.9.4, no changes.
+  * control: Add libpam-pwquality (>= 1.2.2-1) to libpam-sss depends, which
+    makes the password stack work in all cases. (LP: #1159983)
+  * control: Drop check from build-depends for now, to work around a linking bug
+    in check (#712140) that makes the tests fail on (at least) i386.
+
+  [ Stéphane Graber ]
+  * Add postinst/postrm script for libsss-sudo. Those will add a "sudoers"
+    entry to /etc/nsswitch.conf upon first installation of the package and
+    will then take care of adding/removing sss from the stack as required.
+  * Set CK_DEFAULT_TIMEOUT to 30 so that slower buildds (armhf at least) can
+    run the tests without hitting the default 4s timeout.
+
+ -- Timo Aaltonen <tjaalton@ubuntu.com>  Fri, 05 Jul 2013 14:53:06 +0300
+
+sssd (1.8.4-2) unstable; urgency=low
+
+  * fix-cve-2013-0219-1.diff, fix-cve-2013-0219-2.diff,
+    fix-cve-2013-0220.diff: Upstream commits from the stable tree to fix
+    recent CVE reports. (Closes: #698871)
+
+ -- Timo Aaltonen <tjaalton@ubuntu.com>  Wed, 27 Feb 2013 23:38:28 +0200
+
+sssd (1.8.4-1) unstable; urgency=low
+
+  * New upstream bugfix release 1.8.2.
+    - Several fixes to case-insensitive domain functions
+    - Fix for GSSAPI binds when the keytab contains unrelated
+      principals
+    - Fixed several segfaults
+    - Workarounds added for LDAP servers with unreadable RootDSE
+    - SSH knownhostproxy will no longer enter an infinite loop
+      preventing login
+    - The provided SYSV init script now starts SSSD earlier at startup
+      and stops it later during shutdown
+    - Assorted minor fixes for issues discovered by static analysis
+      tools
+  * New upstream bugfix release 1.8.3.
+    - Numerous manpage and translation updates
+    - LDAP: Handle situations where the RootDSE isn't available anonymously
+    - LDAP: Fix regression for users using non-standard LDAP attributes for
+      user information
+  * New upstream bugfix release 1.8.4. (LP: #981125, #985031)
+    - Fix a bug causing AD servers not to fail over properly when the KDC
+      on the primary server is down
+    - Fix an endianness bug on big-endian systems when looking up services
+    - Fix a segfault dealing with nested groups (LP: #981125)
+    - Make the nowait cache updates work for netgroups
+    - Fix a regression that broke domains with use_fully_qualified_names = True
+      (LP: #985031)
+  * control: Move the dependency of libsasl2-modules-gssapi-mit to
+    Recommends.
+  * control: sssd works with Heimdal gssapi modules too, add
+    libsasl2-modules-gssapi-mit as an option for the Recommends.
+    (LP: #966146)
+  * libpam-sss.pam-auth-update:
+    - Drop the dependency to 128, since pam_sss should always be below
+      pam_unix. (LP: #957486)
+    - Drop 'use_authtok' from the password stack, since it only works when
+      pam_cracklib is installed. This will allow password changes on the
+      default install.
+  * sssd.postrm: Try to remove /etc/sssd only if it exists.
+    (Closes: #666226)
+  * Add disabled by default Apparmor profile (LP: #933342)
+    - debian/sssd.upstart.in: load the profile during pre-start
+    - add debian/apparmor-profile, install to /etc/apparmor.d
+    - debian/rules: use dh_apparmor to install profile before sssd is
+      restarted
+    - debian/control: sssd Suggests apparmor (>= 2.3)
+    - debian/control: Add dh-apparmor to build-depends
+    - debian/sssd.preinst: disable profile on clean install or upgrades
+      from earlier than when we shipped the profile
+  * rules: Mangle the date stamp on pam_sss.8 so that the compressed file is
+    identical across all archs. (Closes: #670019)
+  * control: Add build-depends on libnl-dev to enable Netlink support.
+  * control: Add build-depends on libkeyutil-dev to enable support for
+    kernel keyring manipulation.
+  * sssd.logrotate: Rotate logs weekly, keep four previous rotations.
+    (Closes: #672984)
+  * sssd.upstart.in: Delete an invisible control character from the pre-start
+    script. (LP: #1003845)
+
+ -- Timo Aaltonen <tjaalton@ubuntu.com>  Fri, 01 Jun 2012 11:43:42 +0300
+
+sssd (1.8.1-1) unstable; urgency=low
+
+  * New maintainer, Debian SSSD Team. (Closes: #660985)
+
+  [ Timo Aaltonen ]
+  * New upstream release (1.8.1) (Closes: #647980, #624194, #639965)
+    - Support for the service map in NSS
+    - Support for setting default SELinux user context from FreeIPA
+    - Support for retrieving SSH user and host keys from LDAP (Experimental)
+    - Support for caching autofs LDAP requests (Experimental)
+    - Support for caching SUDO rules (Experimental)
+  * Update build-deps:
+    - Add libunistring-dev, libdhash-dev, libcollection-dev and
+      libini-config-dev.
+    - Add check for unit tests.
+    - Drop cvs and python-central.
+    - Migrate to dh, drop cdbs build-dep, add quilt, dh-autoreconf and
+      autopoint to build-deps.
+  * Add new packages:
+    - libipa-hbac0, libipa-hbac-dev, libsss-sudo0, libsss-sudo-dev,
+      and python-libipa-hbac.
+    - Split sssd-tools: add Breaks/Replaces sssd (<< 1.8.0~beta3-1) and
+      add to sssd Suggests
+  * Drop patch to ensure LDAP authentication never accept a zero
+    length password, which is now included upstream.
+  * sssd.upstart.ubuntu:
+    - Don't start before net-device-up. (LP: 812943)
+    - Source /etc/default/sssd. (LP: 812943)
+  * sssd.default: Added a file to include the sssd daemon defaults,
+    currently has '-D -f'.
+  * sssd.init: Drop separate OPTIONS, '-D' comes from /etc/default/sssd
+    now..
+  * rules: Install the Python API files to /usr/share/sssd, as discussed
+    with upstream. (LP: 859611)
+  * fix-python-api-path.dpatch: Use the new location for the API files.
+    (LP: 859611)
+  * libpam-sss.pam-auth-update:
+    - Add 'forward_pass' to auth stack to fix ecryptfs mounts. (LP: 826643)
+    - Add pam_localuser.so to account stack to allow local users to log in.
+      (LP: 860488)
+  * control: sssd now Recommends libpam-sss and libnss-sss, since sssd is
+    mostly useless without them. (LP: 767337)
+  * control, compat: Bump debhelper build-dep and compat level to 8.
+  * Switch patch-system to quilt.
+  * Do not install a working config file by default. The local domain
+    definition was broken (upstream #1014). The daemon will need to be
+    configured by other means before it's usable.
+  * Add support for Multi-Arch (Closes: #634123).
+  * Remove unnecessary libnss-sss.links.
+  * libnss-sss.overrides: Add an override for
+    "package-name-doesnt-match-sonames".
+  * Determine the used init system during build, add lsb-release to
+    build-deps. Default to sysvinit, use upstart if Ubuntu.
+  * sssd.upstart.in: Test if the config file exists, and exit if not.
+  * Fail gracefully if invoke-rc.d returns an error on postinst/prerm, like
+    when the daemon fails to start when there is no config file.
+  * sssd.init.in: Check that /etc/default/sssd is a real file before sourcing
+    it (Closes: #587895).
+  * control: Add libsasl2-modules-gssapi-mit and libsasl2-modules-ldap to
+    Recommends for sssd.
+  * rules: Move the rule for purging .la files before dh_install
+    (Closes: #633206).
+  * sssd.install: Fix the wildcard for plugins to include .so symlinks.
+  * rules: Add configure flags
+    - Disable RPATH
+    - Disable building static libs
+    - Enable ssh user and host key retrieval, autofs request
+      and sudo rules caching. The respective packages need to add support
+      for these to be useful.
+  * Drop fix-python-api-path.patch, included upstream.
+  * sssd.examples: Install the renamed example config.
+  * rules: Drop special handling of the sssd.api.d, upstream uses
+    the proper path now.
+  * rules: Add --fail-missing to dh_install.
+  * sssd.install: Add new files.
+  * libpam-sss.install, control: Move pam_sss.8 to the correct package,
+    add Breaks/Replaces.
+  * rules: Remove some files we don't want to install, to make dh_install
+    happy.
+  * rules: Clean po/*.gmo, po/stamp-po and *.pyc.
+  * Install lintian overrides using dh_lintian.
+  * {sssd,libnss-sss}.lintian-overrides: Update.
+  * Move libsasl2-modules-gssapi to sssd Depends to make sure it gets
+    installed, as it's needed in most cases.
+  * control: Update maintainer address and repo location.
+  * control: Bump the Standards-Version to 3.9.3, no changes.
+  * control: Bump the debhelper build-dep to 9.
+  * control: Add ${misc:Depends} to libipa-hbac*, libsss-sudo*.
+  * control, rules: Migrate to dh_python2 (Closes: #617071).
+  * control: Add myself to uploaders.
+
+  [ Petter Reinholdtsen ]
+  * New upstream version 1.2.4:
+    - Resolves long-standing issues related to group processing with
+      RFC2307bis LDAP servers.
+    - Fixed bugs in RFC2307bis group memberships related to initgroups
+      (Closes: #595564).
+    - Fix tight-loop bug on systems with older OpenLDAP client
+      libraries (such as Red Hat Enterprise Linux 5)
+  * New Upstream Version 1.2.3:
+    - Resolves CVE-2010-2940.
+  * New Upstream Version 1.2.2:
+    - The LDAP provider no longer requires access to the LDAP
+      RootDSE. If it is unavailable, we will continue on with our best
+      guess.
+    - The LDAP provider will now log issues with TLS and GSSAPI to the
+      syslog.
+    - Significant performance improvement when performing initgroups
+      on users who are members of large groups in LDAP.
+    - The sss_client will now reconnect properly to the SSSD if the
+      daemon is restarted.
+      * This resolves an issue causing GDM to crash when logging out
+        of a user after the SSSD had been restarted.
+  * Correct package description for python-sss (Closes: #596215).
+  * Update Standards-Version from 3.8.4 to 3.9.1.  No changes needed.
+
+  [ Stéphane Graber ]
+  * Fix prerm invoke_failure hook to simply return as empty functions
+    are invalid shell syntax.
+
+ -- Timo Aaltonen <tjaalton@ubuntu.com>  Thu, 22 Mar 2012 13:28:27 +0200
+
+sssd (1.2.1-4.4) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Fix FTBFS with -Werror=format-security. Thanks Philippe De Swert for patch.
+    (Closes: #643806).
+
+ -- Hector Oron <zumbi@debian.org>  Sun, 19 Feb 2012 19:33:04 +0000
+
+sssd (1.2.1-4.3) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Adjust install path to consider GNU triplet (Closes: #640626).
+
+ -- Luca Falavigna <dktrkranz@debian.org>  Tue, 20 Sep 2011 20:02:34 +0200
+
+sssd (1.2.1-4.2) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * debian/sssd.install
+    - updated location for ldb modules; Closes: #618159
+
+ -- Sandro Tosi <morph@debian.org>  Fri, 03 Jun 2011 23:53:59 +0200
+
+sssd (1.2.1-4.1) unstable; urgency=medium
+
+   * Non-maintainer upload by the Security Team
+   * Fix CVE-2010-4341 (Closes: #610032)
+
+ -- Moritz Muehlenhoff <jmm@debian.org>  Tue, 25 Jan 2011 22:09:21 +0100
+
+sssd (1.2.1-4) unstable; urgency=low
+
+  * Add patch from Stephen Gallagher to ensure LDAP authentication
+    never accept a zero length password (Closes: #594413).  Solves
+    CVE-2010-2940.
+
+ -- Petter Reinholdtsen <pere@debian.org>  Wed, 25 Aug 2010 22:33:40 +0200
+
+sssd (1.2.1-3) unstable; urgency=low
+
+  [ Petter Reinholdtsen ]
+  * Look for /etc/default/sssd, not /etc/defaults/sssd in init.d
+    script (Closes: #588252).
+  * Make sssd.conf generation more robust, and make sure missing SRV
+    records are ignored and not handled as host names.
+  * Add code in generate-config to look up Kerberos realm using
+    _kerberos TXT record in DNS if it exist.
+  * Recommend bind9-host used by generate-config for SRV and TXT
+    lookups.
+  
+  [ Morten Werner Forsbring ]
+  * Check if /etc/default/sssd is a file and executable, not a directory,
+    before sourcing in init-script. Thanks to lintian.
+
+ -- Morten Werner Forsbring <werner@debian.org>  Thu, 12 Aug 2010 16:31:14 +0200
+
+sssd (1.2.1-2) unstable; urgency=low
+
+  * Make sure init.d script sources /etc/default/sssd (Closes: #588252).
+  * Drop /etc/default/sssd from package, to avoid conffile question
+    from dpkg during upgrades.
+  * Make sure to only remove obsolete sssd conffiles on upgrades, not
+    on first time installation.
+  * Add new script generate-config and call it from the sssd postinst
+    during first time installation to try to generate the sssd.conf
+    file dynamically for LDAP and Kerberos using DNS entries, and fall
+    back to the static example configuration if this fail.
+  * Let sssd suggest libnss-sss and libpam-sss, to make those
+    installing sssd aware of the other packages.
+  * Add netgroup to nsswitch.conf entries added at first time
+    installation, to make sure those installing now get working
+    netgroups when sssd get netgroup support
+  * Let sssd recommend ldap-utils as ldapsearch is used for generating
+    the configuration.
+
+ -- Petter Reinholdtsen <pere@debian.org>  Fri, 06 Aug 2010 23:44:26 +0200
+
+sssd (1.2.1-1) unstable; urgency=low
+
+  [ Petter Reinholdtsen ]
+  * Move calls to pam-auth-update from the package scripts in sssd to
+    libpam-sss, and correct prerm call to remove the correct pam config.
+    Add versioned dependency on libpam-runtime to make sure
+    pam-auth-update is available.
+  * Add code to the postinst and postrm of libnss-sss to update
+    passwd, group and shadow entries in /etc/nsswitch.conf.
+  * Make sure init.d/sssd start after $named, to ensure it can look up
+    in DNS also when the DNS server is on the local machine.
+
+  [ Morten Werner Forsbring ]
+  * New upstream release.
+
+ -- Morten Werner Forsbring <werner@debian.org>  Thu, 24 Jun 2010 14:16:30 +0200
+
+sssd (1.2.0-1) unstable; urgency=low
+
+  [ Petter Reinholdtsen ]
+  * New upstream release.
+    - Add libsemanage1-dev as build dependency, as it is now required.
+    - Drop python-build-with-deb-layout.dpatch, now handled upstream.
+    - Adjust provide-default-working-sssd-config-file.dpatch to
+      work with new package source layout and config file content.
+    - Adjust build rules to cope with server/ changing to src/ in the
+      source tarball.
+    - Add --enable-krb5-locator-plugin to keep building the plugin.
+  * Change the pam-auth-update configuration to make the session
+    script optional instead of sufficient, to make sure the other
+    session modules are executed too.
+  * Change initial pam password entry from requisite to sufficient,
+    to make sure local users can have their password set even if
+    sssd is enabled.
+  * Rename pam-configs/sssd to pam-configs/sss, to have a name that
+    is consistent with the package name libpam-sss.
+  * Add VCS links to the GIT repository.
+  * Move configuration API documentation from /etc/sssd/ to
+    /usr/share/doc/sssd/.  It is not configuration and do not belong
+    in /etc/.
+  * Drop autoconf, automake, libtool, m4 and autotools-dev from
+    build-depends.  There is no need to regenerate the build files any
+    more.
+
+  [ Morten Werner Forsbring ]
+  * Add dnsutils as build-dependency.
+
+ -- Morten Werner Forsbring <werner@debian.org>  Tue, 01 Jun 2010 20:41:59 +0200
+
+sssd (1.0.5-1) unstable; urgency=low
+
+  * Initial upload based on package from Ubuntu (Closes: #579593).
+  * Update standards-version from 3.8.3 to 3.8.4.  No changes needed.
+  * Add init.d script and rename sssd.upstart to sssd.upstart.ubuntu
+    to make sure init.d script is installed instead of upstart job.
+  * Add draft pam-auth-update configuration based on proposals in
+    Launcepad bug #557398.
+  * Update address to FSF in copyright file.  Thanks lintian.
+  * Set section for python-sss to python after advice from lintian.
+  * Rewrite python-build-with-deb-layout.dpatch to patch Makefile.in
+    instead of Makefile.am, to avoid having to run autoreconf.
+  * Make sssd depend on python for its upgrade script.
+  * Extend clean rule to remove generated file server/config/.files.
+  * Make sure sssd.api.conf is installed into the sssd package, and
+    put it in /etc/sssd/sssd.api.conf.  Fixes typo in Ubuntu package.
+
+ -- Petter Reinholdtsen <pere@debian.org>  Wed, 05 May 2010 21:53:29 +0200
+
+sssd (1.0.5-0ubuntu1) lucid; urgency=low
+
+  * New upstream bugfix release. (LP: #510290)
+  * sssd.dirs: Add /var/lib/sss/pubconf (LP: #557394)
+
+ -- Timo Aaltonen <tjaalton@ubuntu.com>  Fri, 16 Apr 2010 11:37:16 +0300
+
+sssd (1.0.2-0ubuntu2) lucid; urgency=low
+
+  * No change rebuild due to libldb downgrade
+
+ -- Scott Kitterman <scott@kitterman.com>  Fri, 02 Apr 2010 17:48:19 -0400
+
+sssd (1.0.2-0ubuntu1) lucid; urgency=low
+
+  * New upstream release (LP: #473262):
+    - python API for managing sssd daemon configuration and
+      native SSSD users.
+    - support for asynchronous cache refreshes.
+    - support password changing in LDAP and Kerberos providers.
+    - support for server failover.
+  * debian/control:
+    - update tdb build dependency to use libtdb-dev.
+    - add libselinux1-dev and libsasl2-dev build dependencies.
+  * debian/sssd.upstart: replace init script with an upstart job.
+  * Turn sssd.conf into a configuration file.
+  * Create sssd log directory.
+
+ -- Mathias Gug <mathiaz@ubuntu.com>  Tue, 19 Jan 2010 15:17:13 -0500
+
+sssd (0.5.0-0ubuntu2) karmic; urgency=low
+
+  * debian/libnss-sss.overrides, debian/sssd.overrides:
+    + Fix linitian errors and warnings (LP: #425697):
+      sssd ships an nss library - these are false-positives.
+  * debian/fix-dbus-watch.dpatch: Update dbus-patch to final
+    upstream version.
+  * debian/fix-proxy-segfault.dpatch: Fix proxy enumeration.
+
+ -- Mathias Gug <mathiaz@ubuntu.com>  Wed, 09 Sep 2009 20:21:04 -0400
+
+sssd (0.5.0-0ubuntu1) karmic; urgency=low
+
+  * Initial release.
+
+ -- Mathias Gug <mathiaz@ubuntu.com>  Mon, 24 Aug 2009 16:35:11 -0400

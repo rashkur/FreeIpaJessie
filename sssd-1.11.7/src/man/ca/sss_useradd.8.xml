@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE reference PUBLIC "-//OASIS//DTD DocBook V4.4//EN"
+"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<reference>
+<title>Pàgines de manual de l'SSSD</title>
+<refentry>
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/upstream.xml" />
+
+    <refmeta>
+        <refentrytitle>sss_useradd</refentrytitle>
+        <manvolnum>8</manvolnum>
+    </refmeta>
+
+    <refnamediv id='name'>
+        <refname>sss_useradd</refname>
+        <refpurpose>crea un usuari nou</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv id='synopsis'>
+        <cmdsynopsis>
+<command>sss_useradd</command> <arg choice='opt'>
+<replaceable>OPCIONS</replaceable></arg> <arg choice='plain'>
+<replaceable>INICI DE SESSIÓ</replaceable></arg></cmdsynopsis>
+    </refsynopsisdiv>
+
+    <refsect1 id='description'>
+        <title>DESCRIPCIÓ</title>
+        <para>
+            <command>sss_useradd</command> crea un nou compte d'usuari utilitzant els
+valors especificats a la línia d'ordres més els valors per defecte del
+sistema.
+        </para>
+    </refsect1>
+
+    <refsect1 id='options'>
+        <title>OPCIONS</title>
+        <variablelist remap='IP'>
+            <varlistentry>
+                <term>
+                    <option>-u</option>,<option>--uid</option> <replaceable>UID</replaceable>
+                </term>
+                <listitem>
+                    <para>
+                        Especifica l'UID de l'usuari al valor d'<replaceable>UID</replaceable>.  Si
+no es dóna, és seleccionat automàticament.
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>-c</option>,<option>--gecos</option>
+<replaceable>COMMENTARI</replaceable>
+                </term>
+                <listitem>
+                    <para>
+                        Qualsevol cadena de text que descriu a l'usuari. Sovint s'utilitza com el
+camp pel nom i cognoms de l'usuari.
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>-h</option>,<option>--home</option>
+<replaceable>HOME_DIR</replaceable>
+                </term>
+                <listitem>
+                    <para>
+                        El directori personal del compte d'usuari.  Per defecte s'afegeix el
+<replaceable>NOM D'USUARI</replaceable> a <filename>/ home</filename> i
+s'utilitza allò com el directori personal.  La base que s'afegeix abans del
+<replaceable>NOM D'USUARI</replaceable> és personalitzable amb el paràmetre
+<quote>user_defaults/baseDirectory</quote> de l'sssd.conf.
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>-s</option>,<option>--shell</option> <replaceable>INTÈRPRET
+D'ORDRES</replaceable>
+                </term>
+                <listitem>
+                    <para>
+                        L'intèrpret d'ordres de l'usuari. Per defecte és
+<filename>/bin/bash</filename>.  Es pot canviar el valor per defecte amb el
+paràmetre <quote>user_defaults/defaultShell</quote> de l'sssd.conf.
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>-G</option>,<option>--groups</option>
+<replaceable>GRUPS</replaceable>
+                </term>
+                <listitem>
+                    <para>
+                        Una llista dels grups existents on n'és també membre aquest usuari.
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>-m</option>,<option>--create-home</option>
+                </term>
+                <listitem>
+                    <para>
+                        Crea el directori personal de l'usuari si no existeix. Al directori personal
+es copiaran els fitxers i directoris continguts en el directori esquelet
+(que es pot definir amb l'opció -k o en el fitxer de configuració).
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>-M</option>,<option>--no-create-home</option>
+                </term>
+                <listitem>
+                    <para>
+                        No crea el directori personal de l'usuari. Invalida els paràmetres de
+configuració.
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>-k</option>,<option>--skel</option> <replaceable>DIRECTORI
+ESQUELET</replaceable>
+                </term>
+                <listitem>
+                    <para>
+                        The skeleton directory, which contains files and directories to be copied in
+the user's home directory, when the home directory is created by
+<command>sss_useradd</command>.
+                    </para>
+                    <para>
+                        Special files (block devices, character devices, named pipes and unix
+sockets) will not be copied.
+                    </para>
+                    <para>
+                        This option is only valid if the <option>-m</option> (or
+<option>--create-home</option>) option is specified, or creation of home
+directories is set to TRUE in the configuration.
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>-Z</option>,<option>--selinux-user</option>
+<replaceable>SELINUX_USER</replaceable>
+                </term>
+                <listitem>
+                    <para>
+                        The SELinux user for the user's login. If not specified, the system default
+will be used.
+                    </para>
+                </listitem>
+            </varlistentry>
+            <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/param_help.xml" />
+        </variablelist>
+    </refsect1>
+
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/local.xml" />
+
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/seealso.xml" />
+
+</refentry>
+</reference>

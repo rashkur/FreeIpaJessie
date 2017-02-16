@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE reference PUBLIC "-//OASIS//DTD DocBook V4.4//EN"
+"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<reference>
+<title>SSSD マニュアル ページ</title>
+<refentry>
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/upstream.xml" />
+
+    <refmeta>
+        <refentrytitle>sssd_krb5_locator_plugin</refentrytitle>
+        <manvolnum>8</manvolnum>
+    </refmeta>
+
+    <refnamediv id='name'>
+        <refname>sssd_krb5_locator_plugin</refname>
+        <refpurpose>SSSD の設定ファイル</refpurpose>
+    </refnamediv>
+
+    <refsect1 id='description'>
+        <title>概要</title>
+        <para>
+            The Kerberos locator plugin <command>sssd_krb5_locator_plugin</command> is
+used by the Kerberos provider of <citerefentry>
+<refentrytitle>sssd</refentrytitle> <manvolnum>8</manvolnum> </citerefentry>
+to tell the Kerberos libraries what Realm and which KDC to use.  Typically
+this is done in <citerefentry> <refentrytitle>krb5.conf</refentrytitle>
+<manvolnum>5</manvolnum> </citerefentry> which is always read by the
+Kerberos libraries. To simplify the configuration the Realm and the KDC can
+be defined in <citerefentry> <refentrytitle>sssd.conf</refentrytitle>
+<manvolnum>5</manvolnum> </citerefentry> as described in <citerefentry>
+<refentrytitle>sssd-krb5</refentrytitle> <manvolnum>5</manvolnum>
+</citerefentry>
+        </para>
+        <para>
+            <citerefentry> <refentrytitle>sssd</refentrytitle> <manvolnum>8</manvolnum>
+</citerefentry> は、レルム、および KDC の名前または IP アドレスを、それぞれ SSSD_KRB5_REALM および
+SSSD_KRB5_KDC の中に置きます。<command>sssd_krb5_locator_plugin</command> が Kerberos
+ライブラリーにより呼び出されるとき、それがこれらの変数を読み込み、評価し、ライブラリーに返します。
+        </para>
+    </refsect1>
+
+    <refsect1 id='notes'>
+        <title>注記</title>
+        <para>
+            すべての Kerberos 実装がプラグインの使用をサポートしているとは限りません。
+<command>sssd_krb5_locator_plugin</command> がシステムにおいて利用可能でなければ、Kerberos
+の構築を反映するように /etc/krb5.conf を編集する必要があります。
+        </para>
+        <para>
+            環境変数 SSSD_KRB5_LOCATOR_DEBUG に何らかの値が設定されていると、デバッグメッセージが標準エラーに送られます。
+        </para>
+    </refsect1>
+
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/seealso.xml" />
+
+</refentry>
+</reference>

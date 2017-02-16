@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE reference PUBLIC "-//OASIS//DTD DocBook V4.4//EN"
+"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<reference>
+<title>Pages de manuel de SSSD</title>
+<refentry>
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/upstream.xml" />
+
+    <refmeta>
+        <refentrytitle>sss_cache</refentrytitle>
+        <manvolnum>8</manvolnum>
+    </refmeta>
+
+    <refnamediv id='name'>
+        <refname>sss_cache</refname>
+        <refpurpose>effectue le nettoyage du cache</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv id='synopsis'>
+        <cmdsynopsis>
+<command>sss_cache</command> <arg choice='opt'>
+<replaceable>options</replaceable> </arg></cmdsynopsis>
+    </refsynopsisdiv>
+
+    <refsect1 id='description'>
+        <title>DESCRIPTION</title>
+        <para>
+            <command>sss_cache</command> invalide les enregistrements en cache de
+SSSD. Les documents invalidés sont obligés d'être rechargés à partir de leur
+serveur d'origine dès que le moteur SSSD redevient disponible en ligne.
+        </para>
+    </refsect1>
+
+    <refsect1 id='options'>
+        <title>OPTIONS</title>
+        <variablelist remap='IP'>
+            <varlistentry>
+                <term>
+                    <option>-E</option>,<option>--everything</option>
+                </term>
+                <listitem>
+                    <para>
+                        Invalider toutes les entrées en cache hors règles sudo.
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>-u</option>,<option>--user</option> <replaceable>login</replaceable>
+                </term>
+                <listitem>
+                    <para>
+                        Invalider un utilisateur spécifique.
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>-U</option>,<option>--users</option>
+                </term>
+                <listitem>
+                    <para>
+                        L'annulation de tous les enregistrements d'utilisateur. Cette option prend
+le pas sur l'invalidation d'un utilisateur spécifique, si elle a été
+également configuré.
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>-g</option>,<option>--group</option>
+<replaceable>group</replaceable>
+                </term>
+                <listitem>
+                    <para>
+                        L'annulation de groupe spécifique.
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>-G</option>,<option>--groups</option>
+                </term>
+                <listitem>
+                    <para>
+                        L'annulation de tous les enregistrements de groupe. Cette option prend le
+pas sur l'invalidation d'un groupe spécifique si elle a été également
+définie.
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>-n</option>,<option>--netgroup</option>
+<replaceable>netgroup</replaceable>
+                </term>
+                <listitem>
+                    <para>
+                        Invalide un netgroup spécifique.
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>-N</option>,<option>--netgroups</option>
+                </term>
+                <listitem>
+                    <para>
+                        Invalider tous les enregistrements de netgroup. Cette option prend le pas
+sur l'invalidation de netgroup spécifiques s'il a été également définie.
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>-s</option>,<option>--service</option>
+<replaceable>service</replaceable>
+                </term>
+                <listitem>
+                    <para>
+                        Invalider le service spécifique.
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>-S</option>,<option>--services</option>
+                </term>
+                <listitem>
+                    <para>
+                        Invalider tous les enregistrements de service. Cette option se substitue à
+l'invalidation de service spécifique s'elle a également été définie.
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry condition="with_autofs">
+                <term>
+                    <option>-a</option>,<option>--autofs-map</option>
+<replaceable>autofs-map</replaceable>
+                </term>
+                <listitem>
+                    <para>
+                        Invalider des cartes autofs spécifiques.
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry condition="with_autofs">
+                <term>
+                    <option>-A</option>,<option>--autofs-maps</option>
+                </term>
+                <listitem>
+                    <para>
+                        Invalider toutes les cartes autofs. Cette option remplace l'invalidation de
+carte spécifique s'elle a également été définie.
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>-d</option>,<option>--domain</option>
+<replaceable>domain</replaceable>
+                </term>
+                <listitem>
+                    <para>
+                        Restreindre le processus d'invalidation à un domaine particulier.
+                    </para>
+                </listitem>
+            </varlistentry>
+            <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/param_help.xml" />
+        </variablelist>
+    </refsect1>
+
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/seealso.xml" />
+
+</refentry>
+</reference>

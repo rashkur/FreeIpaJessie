@@ -1,0 +1,5 @@
+211c2ed0960d632e2a9bb5c44e71e327  usr/lib/x86_64-linux-gnu/sssd/sssd_ifp
+25d8c7d57fb549b47a322c9ba420e5df  usr/share/dbus-1/system-services/org.freedesktop.sssd.infopipe.service
+33be9ae4ebbd14406771d7d5dc552c46  usr/share/doc/sssd-dbus/changelog.Debian.gz
+13a01f8bcb4a56e1df65e43e01444c07  usr/share/doc/sssd-dbus/copyright
+1c7e2fa52f7bd1435d1b7e01b33f1255  usr/share/man/man5/sssd-ifp.5.gz

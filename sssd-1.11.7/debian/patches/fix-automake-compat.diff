@@ -1,0 +1,65 @@
+commit 703dc1eb5b050b24235a6640f271d34ea008cf98
+Author: Jan Engelhardt <jengelh@inai.de>
+Date:   Sat Oct 11 12:36:07 2014 +0000
+
+    build: call AC_BUILD_AUX_DIR before anything else
+    
+    sssd's configure.ac (abridged) contains these lines:
+    
+    	AC_INIT([sssd], ...)
+    	m4_ifdef([AC_USE_SYSTEM_EXTENSIONS],
+    		[AC_USE_SYSTEM_EXTENSIONS], [AC_GNU_SOURCE])
+    	AC_CONFIG_AUX_DIR([build])
+    
+    When turned into configure, this will be emitted:
+    
+    	ac_aux_dir=
+    	for ac_dir in build "$srcdir"/build; do
+    	  if test -f "$ac_dir/install-sh"; then
+    	    ac_aux_dir=$ac_dir
+    	    ac_install_sh="$ac_aux_dir/install-sh -c"
+    	    break
+    
+    However, with automake commit v1.14.1-36-g7bc5927, this will be emitted
+    instead:
+    
+    	ac_aux_dir=
+    	for ac_dir in "$srcdir" "$srcdir/.." "$srcdir/../.."; do
+    	  if test -f "$ac_dir/install-sh"; then
+    	    ac_aux_dir=$ac_dir
+    	    ac_install_sh="$ac_aux_dir/install-sh -c"
+    	    break
+    
+    As configure no longer looks into build/ for install-sh, running
+    ./configure fails:
+    
+    	configure: error: cannot find install-sh, install.sh,
+    	or shtool in "." "./.." "./../.."
+    
+    I think the error is that someone placed AC_BUILD_AUX_DIR
+    too late. Move it upwards.
+    
+    Reviewed-by: Jakub Hrozek <jhrozek@redhat.com>
+
+diff --git a/configure.ac b/configure.ac
+index 660ea8d..e6745cb 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -4,6 +4,8 @@ m4_include([version.m4])
+ AC_INIT([sssd],
+         VERSION_NUMBER,
+         [sssd-devel@lists.fedorahosted.org])
++AC_CONFIG_SRCDIR([BUILD.txt])
++AC_CONFIG_AUX_DIR([build])
+ 
+ m4_ifdef([AC_USE_SYSTEM_EXTENSIONS],
+     [AC_USE_SYSTEM_EXTENSIONS],
+@@ -11,8 +13,6 @@ m4_ifdef([AC_USE_SYSTEM_EXTENSIONS],
+ 
+ CFLAGS="$CFLAGS -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE"
+ 
+-AC_CONFIG_SRCDIR([BUILD.txt])
+-AC_CONFIG_AUX_DIR([build])
+ 
+ AM_INIT_AUTOMAKE([-Wall foreign subdir-objects tar-pax])
+ AM_PROG_CC_C_O

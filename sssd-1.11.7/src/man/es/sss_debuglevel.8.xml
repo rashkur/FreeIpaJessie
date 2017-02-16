@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE reference PUBLIC "-//OASIS//DTD DocBook V4.4//EN"
+"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<reference>
+<title>Páginas de manual de SSSD</title>
+<refentry>
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/upstream.xml" />
+
+    <refmeta>
+        <refentrytitle>sss_debuglevel</refentrytitle>
+        <manvolnum>8</manvolnum>
+    </refmeta>
+
+    <refnamediv id='name'>
+        <refname>sss_debuglevel</refname>
+        <refpurpose>cambia el nivel de depuración mientras SSSD está corriendo</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv id='synopsis'>
+        <cmdsynopsis>
+<command>sss_debuglevel</command> <arg choice='opt'>
+<replaceable>options</replaceable> </arg> <arg
+choice='plain'><replaceable>NEW_DEBUG_LEVEL</replaceable></arg></cmdsynopsis>
+    </refsynopsisdiv>
+
+    <refsect1 id='description'>
+        <title>DESCRIPCION</title>
+        <para>
+            <command>sss_debuglevel</command> cambia el nivel de depuración del monitor
+y proveedores SSSD a <replaceable>NEW_DEBUG_LEVEL</replaceable> mientras
+SSSD está corriendo.
+        </para>
+    </refsect1>
+
+    <refsect1 id='options'>
+        <title>OPCIONES</title>
+        <variablelist remap='IP'>
+            <varlistentry>
+                <term>
+                    <option>-c</option>,<option>--config</option>
+                </term>
+                <listitem>
+                    <para>
+                        Especifica un fichero de configuración distinto al de por defecto. El por
+defecto es <filename>/etc/sssd/sssd.conf</filename>. Para referencia sobre
+las opciones y sintaxis del fichero de configuración, consulta la página de
+manual <citerefentry> <refentrytitle>sssd.conf</refentrytitle>
+<manvolnum>5</manvolnum> </citerefentry>.
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <replaceable>NEW_DEBUG_LEVEL</replaceable>
+                </term>
+                <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/debug_levels.xml" />
+            </varlistentry>
+        </variablelist>
+    </refsect1>
+
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/seealso.xml" />
+
+</refentry>
+</reference>

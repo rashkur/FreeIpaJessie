@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE reference PUBLIC "-//OASIS//DTD DocBook V4.4//EN"
+"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<reference>
+<title>Pages de manuel de SSSD</title>
+<refentry>
+    <refentryinfo>
+<productname>SSSD</productname> <orgname>Le projet SSSD -
+http://fedorahosted.org/sssd</orgname></refentryinfo>
+
+    <refmeta>
+        <refentrytitle>pam_sss</refentrytitle>
+        <manvolnum>8</manvolnum>
+    </refmeta>
+
+    <refnamediv id='name'>
+        <refname>pam_sss</refname>
+        <refpurpose>Module PAM pour SSSD</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv id='synopsis'>
+        <cmdsynopsis>
+<command>pam_sss.so</command> <arg choice='opt'>
+<replaceable>quiet</replaceable> </arg> <arg choice='opt'>
+<replaceable>forward_pass</replaceable> </arg> <arg choice='opt'>
+<replaceable>use_first_pass</replaceable> </arg> <arg choice='opt'>
+<replaceable>use_authtok</replaceable> </arg> <arg choice='opt'>
+<replaceable>retry=N</replaceable> </arg> <arg choice='opt'>
+<replaceable>ignore_unknown_user</replaceable> </arg> <arg choice='opt'>
+<replaceable>ignore_authinfo_unavail</replaceable> </arg></cmdsynopsis>
+    </refsynopsisdiv>
+
+    <refsect1 id='description'>
+        <title>DESCRIPTION</title>
+        <para><command>pam_sss.so</command> est l'interface PAM pour le démon des services
+de sécurité système (SSSD). Les erreurs et résultats sont journalisés par
+<command>syslog(3)</command> avec l'argument LOG_AUTHPRIV.</para>
+    </refsect1>
+
+    <refsect1 id='options'>
+        <title>OPTIONS</title>
+        <variablelist remap='IP'>
+            <varlistentry>
+                <term>
+                    <option>quiet</option>
+                </term>
+                <listitem>
+                    <para>Supprimer les messages de journal pour les utilisateurs inconnus.</para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>forward_pass</option>
+                </term>
+                <listitem>
+                    <para>Si <option>forward_pass</option> est défini, le mot de passe saisi est
+inséré en mémoire pour les autres modules PAM utilisés.
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>use_first_pass</option>
+                </term>
+                <listitem>
+                    <para>L'argument use_first_pass force le module à utliser un module de mot de
+passe déjà en mémoire et n'en fera jamais la demande à l'utilisateur. Si
+aucun mot de passe n'est disponible ou que celui-ci n'est pas approprié,
+l'utilisateur verra son accès refusé.</para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>use_authtok</option>
+                </term>
+                <listitem>
+                    <para>Lorsque le changement de mot de passe force le module à modifier le mot de
+passe par celui fourni par un module de mot de passe déjà chargé en mémoire.</para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>retry=N</option>
+                </term>
+                <listitem>
+                    <para>Si définit, on demande le mot de passe à l'utilisateur encore N fois si
+l'authentification échoue. Par défaut : 0.</para>
+                    <para>Veuillez noter que cette option peut ne pas fonctionner comme attendu si
+l'application qui appelle PAM gère lui-même les dialogues avec
+l'utilisateur. Un exemple typique est <command>sshd</command> avec
+<option>PasswordAuthentication</option>.</para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>ignore_unknown_user</option>
+                </term>
+                <listitem>
+                    <para>If this option is specified and the user does not exist, the PAM module will
+return PAM_IGNORE. This causes the PAM framework to ignore this module.</para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>ignore_authinfo_unavail</option>
+                </term>
+                <listitem>
+                    <para>
+                    Specifies that the PAM module should return PAM_IGNORE if it cannot contact
+the SSSD daemon. This causes the PAM framework to ignore this module.</para>
+                </listitem>
+            </varlistentry>
+        </variablelist>
+    </refsect1>
+
+    <refsect1 id='module_types_provides'>
+        <title>TYPES DE MODULES FOURNIS</title>
+        <para>Tous les types de module (<option>account</option>, <option>auth</option>,
+<option>password</option> et <option>session</option>) sont fournis.
+        </para>
+    </refsect1>
+
+    <refsect1 id='files'>
+        <title>FICHIERS</title>
+        <para>Si une réinitialisation par root d'un mot de passe échoue parce que le
+fournisseur SSSD correspondant ne prend pas en charge la réinitialisation de
+mot de passe, un message spécifique peut être affiché. Ce message peut, par
+exemple, contenir les instructions permettant la réinitialisation.</para>
+
+        <para>Le message est lu depuis le fichier
+<filename>pam_sss_pw_reset_message.LOC</filename> où LOC représente une
+chaîne de paramètres régionaux retournée par
+<citerefentry><refentrytitle>setlocale</refentrytitle>
+<manvolnum>3</manvolnum></citerefentry>. Si il n'y a aucun fichier
+correspondant, le contenu de
+<filename>pam_sss_pw_reset_message.txt</filename> est affiché. L'utilisateur
+root doit être le propriétaire des fichiers et seul root peut avoir les
+autorisations en lecture et en écriture alors que tous les autres
+utilisateurs doivent avoir les autorisations en lecture seule.</para>
+
+        <para>Ces fichiers sont recherchés dans le dossier
+<filename>/etc/sssd/customize/NOM_DE_DOMAINE/</filename>. Si aucun fichier
+correspondant n'est présent, un message spécifique est affiché.</para>
+    </refsect1>
+
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/seealso.xml" />
+
+</refentry>
+</reference>

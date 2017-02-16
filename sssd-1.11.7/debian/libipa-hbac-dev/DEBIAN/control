@@ -1,0 +1,15 @@
+Package: libipa-hbac-dev
+Source: sssd
+Version: 1.11.7-3
+Architecture: amd64
+Maintainer: Debian SSSD Team <pkg-sssd-devel@lists.alioth.debian.org>
+Installed-Size: 66
+Depends: libipa-hbac0 (= 1.11.7-3)
+Section: libdevel
+Priority: extra
+Homepage: https://fedorahosted.org/sssd/
+Description: FreeIPA HBAC Evaluator library
+ Utility library to validate FreeIPA HBAC rules for authorization requests.
+ .
+ This package contains header files and symlinks to develop programs which will
+ use the libipa-hbac library.

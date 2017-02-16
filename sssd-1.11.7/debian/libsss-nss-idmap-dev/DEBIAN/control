@@ -1,0 +1,15 @@
+Package: libsss-nss-idmap-dev
+Source: sssd
+Version: 1.11.7-3
+Architecture: amd64
+Maintainer: Debian SSSD Team <pkg-sssd-devel@lists.alioth.debian.org>
+Installed-Size: 61
+Depends: libsss-nss-idmap0 (= 1.11.7-3)
+Section: libdevel
+Priority: extra
+Homepage: https://fedorahosted.org/sssd/
+Description: SID based lookups library for SSSD -- development files
+ Utility library for SID based lookups.
+ .
+ This package contains header files and symlinks to develop programs which will
+ use the libsss-nss-idmap library.

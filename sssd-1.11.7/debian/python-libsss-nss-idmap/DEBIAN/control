@@ -1,0 +1,13 @@
+Package: python-libsss-nss-idmap
+Source: sssd
+Version: 1.11.7-3
+Architecture: amd64
+Maintainer: Debian SSSD Team <pkg-sssd-devel@lists.alioth.debian.org>
+Installed-Size: 66
+Depends: libsss-nss-idmap0 (= 1.11.7-3), python (>= 2.7), python (<< 2.8), libc6 (>= 2.4), libpython2.7 (>= 2.7)
+Section: python
+Priority: extra
+Homepage: https://fedorahosted.org/sssd/
+Description: Python bindings for the SID lookups library
+ This package contains the bindings for libnss_sss_idmap to be used by
+ Python applications.

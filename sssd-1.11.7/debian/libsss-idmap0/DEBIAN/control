@@ -1,0 +1,12 @@
+Package: libsss-idmap0
+Source: sssd
+Version: 1.11.7-3
+Architecture: amd64
+Maintainer: Debian SSSD Team <pkg-sssd-devel@lists.alioth.debian.org>
+Installed-Size: 72
+Depends: libc6 (>= 2.14)
+Section: libs
+Priority: extra
+Homepage: https://fedorahosted.org/sssd/
+Description: ID mapping library for SSSD
+ Utility library to convert SIDs to Unix uids and gids.

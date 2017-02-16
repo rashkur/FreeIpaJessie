@@ -1,0 +1,54 @@
+<refsect1 id='failover'>
+    <title>BASCULEMENT</title>
+    <para>
+        La fonctionnalité de basculement autorise le moteur à basculer
+automatiquement sur un serveur différent si le serveur actuel est
+défaillant.
+    </para>
+    <refsect2 id='failover_syntax'>
+        <title>Syntaxe de basculement</title>
+        <para>
+            La liste des serveurs est donnée sous forme de liste séparée par des
+virgules ; un nombre quelconque d'espaces est autorisé autour de la
+virgule. Les serveurs sont répertoriés par ordre de préférence. La liste
+peut contenir un nombre quelconque de serveurs.
+        </para>
+        <para>
+            Pour chaque option de configuration alors que le basculement est activé, il
+existe deux variantes : <emphasis>primary</emphasis> et
+<emphasis>backup</emphasis>.  L'idée est que les serveurs dans la liste
+principale sont préférés et les serveurs de secours sont interrogés
+uniquement si aucun serveur primaire ne peut être atteint. Si un serveur de
+secours est sélectionné, un délai d'attente de 31 secondes est défini. Après
+ce délai d'attente, SSSD tentera périodiquement de se reconnecter à un des
+serveurs primaires. S'il réussit, il remplacera l'actuel serveur (de
+secours) actif.
+        </para>
+    </refsect2>
+    <refsect2 id='failover_mechanism'>
+        <title>Mécanisme de basculement</title>
+        <para>
+            Le mécanisme de basculement fait la distinction entre une machine et d'un
+service. Le moteur tente d'abord de résoudre le nom d'hôte d'un ordinateur
+donné ; en cas d'échec de cette tentative de résolution, la machine est
+considérée comme hors ligne. Aucune autre tentative n'est faite pour se
+connecter à cette machine pour tout autre service. Si la tentative de
+résolution réussit, le serveur principal tente de se connecter à un service
+sur cette machine. Si la tentative de connexion de service échoue, alors ce
+seul service est considéré comme hors ligne et le moteur passe
+automatiquement au service suivant.  La machine est toujours considérée en
+ligne et peut toujours être considérée pour une tentative d'accès à un autre
+service.
+        </para>
+        <para>
+            Les tentatives de connexion ultérieures sont faites vers des machines ou des
+services marqués comme hors connexion après un délai spécifié ; ce délai est
+actuellement spécifié en dur à 30 secondes.
+        </para>
+        <para>
+            S'il n'y a plus aucune machine à essayer, le moteur dans son ensemble
+bascule dans le mode hors connexion et tente ensuite de se reconnecter
+toutes les 30 secondes.
+        </para>
+    </refsect2>
+</refsect1>

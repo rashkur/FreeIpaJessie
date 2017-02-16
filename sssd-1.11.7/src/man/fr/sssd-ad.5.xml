@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE reference PUBLIC "-//OASIS//DTD DocBook V4.4//EN"
+"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<reference>
+<title>Pages de manuel de SSSD</title>
+<refentry>
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/upstream.xml" />
+
+    <refmeta>
+        <refentrytitle>sssd-ad</refentrytitle>
+        <manvolnum>5</manvolnum>
+        <refmiscinfo class="manual">Formats de fichier et conventions</refmiscinfo>
+    </refmeta>
+
+    <refnamediv id='name'>
+        <refname>sssd-ad</refname>
+        <refpurpose>Le fichier de configuration pour SSSD</refpurpose>
+    </refnamediv>
+
+    <refsect1 id='description'>
+        <title>DESCRIPTION</title>
+        <para>
+            Cette page de manuel décrit la configuration du fournisseur AD pour
+<citerefentry> <refentrytitle>sssd</refentrytitle> <manvolnum>8</manvolnum>
+</citerefentry>. Pour une référence détaillée sur la syntaxe, cf. la section
+<quote>FORMAT DE FICHIER</quote> de la page de manuel <citerefentry>
+<refentrytitle>sssd.conf</refentrytitle> <manvolnum>5</manvolnum>
+</citerefentry>.
+        </para>
+        <para>
+            Le fournisseur AD est un moteur utilisé pour se connecter à un serveur
+Active Directory. Ce fournisseur exige que la machine soit jointe au domaine
+AD et qu'un fichier keytab soit disponible.
+        </para>
+        <para>
+            Le fournisseur AD prend en charge la connexion à Active Directory 2008 R2 ou
+ultérieures. Les versions antérieures peuvent fonctionner, mais ne sont pas
+supportées.
+        </para>
+        <para>
+            The AD provider is able to provide identity information and authentication
+for entities from trusted domains as well. Currently only trusted domains in
+the same forest are recognized.
+        </para>
+        <para>
+            Le fournisseur AD accepte les mêmes options utilisées par le fournisseur
+d'identité <citerefentry><refentrytitle>sssd-ldap</refentrytitle>
+<manvolnum>5</manvolnum></citerefentry> et le fournisseur d'authentification
+<citerefentry><refentrytitle>sssd-krb5</refentrytitle>
+<manvolnum>5</manvolnum></citerefentry> avec les quelques exceptions
+décrites ci-dessous.
+        </para>
+        <para>
+            However, it is neither necessary nor recommended to set these options. The
+AD provider can also be used as an access, chpass and sudo provider. No
+configuration of the access provider is required on the client side.
+        </para>
+        <para>
+            By default, the AD provider will map UID and GID values from the objectSID
+parameter in Active Directory. For details on this, see the <quote>ID
+MAPPING</quote> section below. If you want to disable ID mapping and instead
+rely on POSIX attributes defined in Active Directory, you should set
+<programlisting>
+ldap_id_mapping = False
+            </programlisting> In order to retrieve users and
+groups using POSIX attributes from trusted domains, the AD administrator
+must make sure that the POSIX attributes are replicated to the Global
+Catalog.
+        </para>
+        <para>
+            Users, groups and other entities served by SSSD are always treated as
+case-insensitive in the AD provider for compatibility with Active
+Directory's LDAP implementation.
+        </para>
+    </refsect1>
+
+    <refsect1 id='file-format'>
+        <title>OPTIONS DE CONFIGURATION</title>
+        <para>Se référer à la section <quote>SECTIONS DE DOMAINE</quote> de la page de
+manuel <citerefentry> <refentrytitle>sssd.conf</refentrytitle>
+<manvolnum>5</manvolnum> </citerefentry> pour les détails sur la
+configuration d'un domaine SSSD. <variablelist>
+                <varlistentry>
+                    <term>ad_domain (string)</term>
+                    <listitem>
+                        <para>
+                            Spécifie le nom du domaine Active Directory.  Ceci est facultatif. S'il
+n'est pas fourni, le nom de domaine de la configuration est utilisé.
+                        </para>
+                        <para>
+                            Pour un fonctionnement correct, cette option doit être le nom long du
+domaine Active Directory, spécifié en minuscules.
+                        </para>
+                        <para>
+                            Le nom de domaine court (aussi connu comme le nom NetBIOS ou nom plat) est
+autodétecté par SSSD.
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>ad_server, ad_backup_server (string)</term>
+                    <listitem>
+                        <para>
+                            La liste par ordre de préférence séparée par des virgules des noms de
+systèmes des serveurs AD auquel SSSD doit se connecter. Pour plus
+d'informations sur la redondance de serveurs et le basculement, consulter la
+section <quote>BASCULEMENT</quote>. Ceci est optionnel si la découverte
+automatique est activée.  Pour plus d'informations sur la découverte de
+services, se reporter à la section de <quote>DÉCOUVERTE DE SERVICE</quote>.
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>ad_hostname (string)</term>
+                    <listitem>
+                        <para>
+                            Facultatif. Peut être défini sur les machines où le hostname(5) ne reflète
+pas le nom pleinenent qualifié utilisé dans le domaine Active Directory pour
+identifier ce système.
+                        </para>
+                        <para>
+                            Ce champ est utilisé pour déterminer le principal d'hôte utilisé dans un
+fichier keytab. Elle doit correspondre au nom du système pour lequel a été
+publié un fichier keytab.
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>ad_enable_dns_sites (booléen)</term>
+                    <listitem>
+                        <para>
+                            Active les sites DNS - découverte de service basée sur l'emplacement
+                        </para>
+                        <para>
+                            Si configuré à true et que la découverte de service (cf. le paragraphe
+Découverte de service au bas de la page de manuel) est activée, SSSD tentera
+d'abord de découvrir le serveur Active Directory auquel se connecter en
+utilisant Active Directory Site Discovery, puis se repliera sur
+l'utilisation des enregistrements DNS SRV si aucun site AD n'est trouvé. La
+configuration SRV du DNS, incluant la découverte de domaine, est aussi
+utilisée pendant la découverte de site.
+                        </para>
+                        <para>
+                            Par défaut : true
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>ad_access_filter (boolean)</term>
+                    <listitem>
+                        <para>
+                            This option specifies LDAP access control filter that the user must match in
+order to be allowed access. Please note that the
+<quote>access_provider</quote> option must be explicitly set to
+<quote>ad</quote> in order for this option to have an effect.
+                        </para>
+                        <para>
+                            The option also supports specifying different filters per domain or
+forest. This extended filter would consist of:
+<quote>KEYWORD:NAME:FILTER</quote>.  The keyword can be either
+<quote>DOM</quote>, <quote>FOREST</quote> or missing.
+                        </para>
+                        <para>
+                            If the keyword equals to <quote>DOM</quote> or is missing, then
+<quote>NAME</quote> specifies the domain or subdomain the filter applies
+to.  If the keyword equals to <quote>FOREST</quote>, then the filter equals
+to all domains from the forest specified by <quote>NAME</quote>.
+                        </para>
+                        <para>
+                            Multiple filters can be separated with the <quote>?</quote> character,
+similarly to how search bases work.
+                        </para>
+                        <para>
+                            The most specific match is always used. For example, if the option specified
+filter for a domain the user is a member of and a global filter, the
+per-domain filter would be applied.  If there are more matches with the same
+specification, the first one is used.
+                        </para>
+                        <para>
+                            Exemples :
+                        </para>
+                        <programlisting>
+# apply filter on domain called dom1 only:
+dom1:(memberOf=cn=admins,ou=groups,dc=dom1,dc=com)
+
+# apply filter on domain called dom2 only:
+DOM:dom2:(memberOf=cn=admins,ou=groups,dc=dom2,dc=com)
+
+# apply filter on forest called EXAMPLE.COM only:
+FOREST:EXAMPLE.COM:(memberOf=cn=admins,ou=groups,dc=example,dc=com)
+                        </programlisting>
+                        <para>
+                            Par défaut : non défini
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>ad_enable_gc (booléen)</term>
+                    <listitem>
+                        <para>
+                            By default, the SSSD connects to the Global Catalog first to retrieve users
+from trusted domains and uses the LDAP port to retrieve group memberships or
+as a fallback. Disabling this option makes the SSSD only connect to the LDAP
+port of the current AD server.
+                        </para>
+                        <para>
+                            Please note that disabling Global Catalog support does not disable
+retrieving users from trusted domains. The SSSD would connect to the LDAP
+port of trusted domains instead. However, Global Catalog must be used in
+order to resolve cross-domain group memberships.
+                        </para>
+                        <para>
+                            Par défaut : true
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>dyndns_update (booléen)</term>
+                    <listitem>
+                        <para>
+                            Facultatif. Cette option indique à SSSD de mettre à jour automatiquement le
+serveur DNS intégré à IPA v2 avec l'adresse IP de ce client. La mise à jour
+est sécurisée avec GSS-TSIG. Ainsi, l'administrateur Active Directory a
+uniquement besoin d'activer les mises à jour sécurisées pour la zone
+DNS. L'adresse IP de la connexion LDAP AD est utilisée pour les mises à
+jour, à moins qu'elle ne soit spécifiée par l'utilisation de l'option
+<quote>dyndns_iface</quote>.
+                        </para>
+                        <para>
+                            NOTE : Sur les systèmes plus anciens (tels que RHEL 5), afin que ce
+comportement fonctionne de façon fiable, le domaine Kerberos par défaut doit
+être défini correctement dans /etc/krb5.conf
+                        </para>
+                        <para>
+                            Par défaut : true
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>dyndns_ttl (entier)</term>
+                    <listitem>
+                        <para>
+                            Le TTL à appliquer à l'enregistrement du client DNS lors de sa mise à jour.
+Si dyndns_update a la valeur false, cela n'a aucun effet. Cela remplacera le
+TTL côté serveur s'il est défini par un administrateur.
+                        </para>
+                        <para>
+                            Par défaut : 3600 (secondes)
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>dyndns_iface (chaîne)</term>
+                    <listitem>
+                        <para>
+                            Facultatif. Applicable seulement quand dyndns_update est vrai. Choisit
+l'interface dont l'adresse IP sera utilisée pour les mises à jour dynamiques
+du DNS.
+                        </para>
+                        <para>
+                            Par défaut : utilise l'adresse IP de la connexion LDAP AD
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>dyndns_refresh_interval (entier)</term>
+                    <listitem>
+                        <para>
+                            Fréquence de mise à jour des DNS par le moteur en plus des mises à jour
+automatiques effectuées lorsque le moteur arrive en ligne. Cette option est
+facultative, et n'est applicable que lorsque l'option dyndns_update est
+configurée à true.
+                        </para>
+                        <para>
+                            Par défaut : 86400 (24 heures)
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>dyndns_update_ptr (booléen)</term>
+                    <listitem>
+                        <para>
+                            Selon que l'enregistrement PTR doit être explicitement mis à jour lors de la
+mise à jour des enregistrements DNS du client. Applicable uniquement lorsque
+l'option dyndns_update est configurée à true.
+                        </para>
+                        <para>
+                            Par défaut : True
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>dyndns_force_tcp (booléen)</term>
+                    <listitem>
+                        <para>
+                            Selon que l'utilitaire nsupdate doit utiliser TCP par défaut pour la
+communication avec le serveur DNS.
+                        </para>
+                        <para>
+                            Par défaut : False (laisser nsupdate choisir le protocole)
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/override_homedir.xml" />
+                <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/homedir_substring.xml" />
+
+                <varlistentry>
+                    <term>krb5_use_enterprise_principal (booléen)</term>
+                    <listitem>
+                        <para>
+                            Indique si le principal de l'utilisateur doit être traité comme un principal
+d'entreprise. Cf. la section 5 de la RFC 6806 pour plus de détails sur les
+principals d'entreprise.
+                        </para>
+
+                        <para>
+                            Par défaut : true
+                        </para>
+                        <para>
+                             Noter que cette valeur par défaut diffère du moteur de traitement Kerberos
+original.
+                        </para>
+                    </listitem>
+                </varlistentry>
+            </variablelist>
+        </para>
+    </refsect1>
+
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/failover.xml" />
+
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/service_discovery.xml" />
+
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/ldap_id_mapping.xml" />
+
+    <refsect1 id='example'>
+        <title>EXEMPLE</title>
+        <para>
+            L'exemple suivant suppose que SSSD est correctement configuré et example.com
+est un des domaines de la section <replaceable>[sssd]</replaceable>. Ces
+exemples montrent seulement les options spécifiques au fournisseur AD.
+        </para>
+        <para>
+<programlisting>
+[domain/EXAMPLE]
+id_provider = ad
+auth_provider = ad
+access_provider = ad
+chpass_provider = ad
+
+ad_server = dc1.example.com
+ad_hostname = client.example.com
+ad_domain = example.com
+</programlisting>
+        </para>
+    </refsect1>
+
+    <refsect1 id='notes'>
+        <title>NOTES</title>
+        <para>
+            Le fournisseur de contrôle d'accès AD vérifie si le compte a expiré.  Cela a
+le même effet que la configuration suivante du fournisseur LDAP :
+<programlisting>
+access_provider = ldap
+ldap_access_order = expire
+ldap_account_expire_policy = ad
+</programlisting>
+        </para>
+        <para>
+            Cependant, à moins que le fournisseur de contrôle d'accès <quote>ad</quote>
+soit explicitement configué, le fournisseur de contrôle d'accès par défaut
+est <quote>permit</quote>.
+        </para>
+    </refsect1>
+
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/seealso.xml" />
+
+</refentry>
+</reference>

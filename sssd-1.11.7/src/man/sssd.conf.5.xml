@@ -1,0 +1,2072 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE reference PUBLIC "-//OASIS//DTD DocBook V4.4//EN"
+"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<reference>
+<title>SSSD Manual pages</title>
+<refentry>
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/upstream.xml" />
+
+    <refmeta>
+        <refentrytitle>sssd.conf</refentrytitle>
+        <manvolnum>5</manvolnum>
+        <refmiscinfo class="manual">File Formats and Conventions</refmiscinfo>
+    </refmeta>
+
+    <refnamediv id='name'>
+        <refname>sssd.conf</refname>
+        <refpurpose>the configuration file for SSSD</refpurpose>
+    </refnamediv>
+
+    <refsect1 id='file-format'>
+        <title>FILE FORMAT</title>
+
+        <para>
+            The file has an ini-style syntax and consists of sections and
+            parameters. A section begins with the name of the section in
+            square brackets and continues until the next section begins. An
+            example of section with single and multi-valued parameters:
+            <programlisting>
+                <replaceable>[section]</replaceable>
+                <replaceable>key</replaceable> = <replaceable>value</replaceable>
+                <replaceable>key2</replaceable> = <replaceable>value2,value3</replaceable>
+            </programlisting>
+        </para>
+
+        <para>
+            The data types used are string (no quotes needed), integer
+            and bool (with values of <quote>TRUE/FALSE</quote>).
+        </para>
+
+        <para>
+            A line comment starts with a hash sign (<quote>#</quote>) or a
+            semicolon (<quote>;</quote>).
+            Inline comments are not supported.
+        </para>
+
+        <para>
+            All sections can have an optional
+            <replaceable>description</replaceable> parameter. Its function
+            is only as a label for the section.
+        </para>
+
+        <para>
+            <filename>sssd.conf</filename> must be a regular file, owned by
+            root and only root may read from or write to the file.
+        </para>
+    </refsect1>
+
+    <refsect1 id='special-sections'>
+        <title>SPECIAL SECTIONS</title>
+
+        <refsect2 id='services'>
+            <title>The [sssd] section</title>
+            <para>
+                Individual pieces of SSSD functionality are provided by special
+                SSSD services that are started and stopped together with SSSD.
+                The services are managed by a special service frequently called
+                <quote>monitor</quote>. The <quote>[sssd]</quote> section is used
+                to configure the monitor as well as some other important options
+                like the identity domains.
+                <variablelist>
+                    <title>Section parameters</title>
+                    <varlistentry>
+                        <term>config_file_version (integer)</term>
+                        <listitem>
+                            <para>
+                                Indicates what is the syntax of the config
+                                file. SSSD 0.6.0 and later use version 2.
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                    <varlistentry>
+                        <term>services</term>
+                        <listitem>
+                            <para>
+                                Comma separated list of services that are
+                                started when sssd itself starts.
+                            </para>
+                            <para>
+                                Supported services: nss, pam
+                                <phrase condition="with_sudo">, sudo</phrase>
+                                <phrase condition="with_autofs">, autofs</phrase>
+                                <phrase condition="with_ssh">, ssh</phrase>
+                                <phrase condition="with_pac_responder">, pac</phrase>
+                                <phrase condition="with_ifp">, ifp</phrase>
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                    <varlistentry>
+                        <term>reconnection_retries (integer)</term>
+                        <listitem>
+                            <para>
+                                Number of times services should attempt to
+                                reconnect in the event of a Data Provider
+                                crash or restart before they give up
+                            </para>
+                            <para>
+                                Default: 3
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                    <varlistentry>
+                        <term>domains</term>
+                        <listitem>
+                            <para>
+                                A domain is a database containing user
+                                information. SSSD can use more domains
+                                at the same time, but at least one
+                                must be configured or SSSD won't start.
+                                This parameter described the list of domains
+                                in the order you want them to be queried.
+                                A domain name should only consist of alphanumeric
+                                ASCII characters, dashes and underscores.
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                    <varlistentry>
+                        <term>re_expression (string)</term>
+                        <listitem>
+                            <para>
+                                Default regular expression that describes how to
+                                parse the string containing user name and domain
+                                into these components.
+                            </para>
+                            <para>
+                                Each domain can have an individual regular
+                                expression configured. For some ID providers
+                                there are also default regular expressions.  See
+                                DOMAIN SECTIONS for more info on these regular
+                                expressions.
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                    <varlistentry>
+                        <term>full_name_format (string)</term>
+                        <listitem>
+                            <para>
+                                A <citerefentry>
+                                    <refentrytitle>printf</refentrytitle>
+                                    <manvolnum>3</manvolnum>
+                                </citerefentry>-compatible format that describes how to
+                                compose a fully qualified name from user name
+                                and domain name components.
+                            </para>
+                            <para>
+                                The following expansions are supported:
+                                <variablelist>
+                                    <varlistentry>
+                                        <term>%1$s</term>
+                                        <listitem><para>user name</para></listitem>
+                                    </varlistentry>
+                                    <varlistentry>
+                                        <term>%2$s</term>
+                                        <listitem>
+                                            <para>
+                                                domain name as specified in the
+                                                SSSD config file.
+                                            </para>
+                                        </listitem>
+                                    </varlistentry>
+                                    <varlistentry>
+                                        <term>%3$s</term>
+                                        <listitem>
+                                            <para>
+                                                domain flat name. Mostly usable
+                                                for Active Directory domains, both
+                                                directly configured or discovered
+                                                via IPA trusts.
+                                            </para>
+                                        </listitem>
+                                    </varlistentry>
+                                </variablelist>
+                            </para>
+                            <para>
+                                Each domain can have an individual format string configured.
+                                see DOMAIN SECTIONS for more info on this option.
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                    <varlistentry>
+                        <term>try_inotify (boolean)</term>
+                        <listitem>
+                            <para>
+                                SSSD monitors the state of resolv.conf to
+                                identify when it needs to update its internal
+                                DNS resolver. By default, we will attempt to
+                                use inotify for this, and will fall back to
+                                polling resolv.conf every five seconds if
+                                inotify cannot be used.
+                            </para>
+                            <para>
+                                There are some limited situations where it is
+                                preferred that we should skip even trying to
+                                use inotify. In these rare cases, this option
+                                should be set to 'false'
+                            </para>
+                            <para>
+                                Default: true on platforms where inotify is
+                                supported. False on other platforms.
+                            </para>
+                            <para>
+                                Note: this option will have no effect on
+                                platforms where inotify is unavailable. On
+                                these platforms, polling will always be used.
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                    <varlistentry>
+                        <term>krb5_rcache_dir (string)</term>
+                        <listitem>
+                            <para>
+                                Directory on the filesystem where SSSD should
+                                store Kerberos replay cache files.
+                            </para>
+                            <para>
+                                This option accepts a special value
+                                __LIBKRB5_DEFAULTS__ that will instruct SSSD
+                                to let libkrb5 decide the appropriate
+                                location for the replay cache.
+                            </para>
+                            <para>
+                                Default: Distribution-specific and specified
+                                at build-time. (__LIBKRB5_DEFAULTS__ if not
+                                configured)
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                    <varlistentry>
+                        <term>default_domain_suffix (string)</term>
+                        <listitem>
+                            <para>
+                                This string will be used as a default domain
+                                name for all names without a domain name
+                                component. The main use case is environments
+                                where the primary domain is intended for managing host
+                                policies and all users are located in a trusted domain.
+                                The option allows those users
+                                to log in just with their user name without
+                                giving a domain name as well.
+                            </para>
+                            <para>
+                                Please note that if this option is set all
+                                users from the primary domain have to use their
+                                fully qualified name, e.g. user@domain.name,
+                                to log in.
+                            </para>
+                            <para>
+                                Default: not set
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                    <varlistentry>
+                        <term>override_space (string)</term>
+                        <listitem>
+                            <para>
+                                This parameter will replace spaces (space bar)
+                                with the given character for user and group names.
+                                e.g. (_). User name &quot;john doe&quot; will
+                                be &quot;john_doe&quot; This feature was added to
+                                help compatibility with shell scripts that have
+                                difficulty handling spaces, due to the
+                                default field separator in the shell.
+                            </para>
+                            <para>
+                                Please note it is a configuration error to use
+                                a replacement character that might be used in
+                                user or group names. If a name contains the
+                                replacement character SSSD tries to return the
+                                unmodified name but in general the result of a
+                                lookup is undefined.
+                            </para>
+                            <para>
+                                Default: not set (spaces will not be replaced)
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                </variablelist>
+            </para>
+        </refsect2>
+
+    </refsect1>
+
+    <refsect1 id='services-sections'>
+        <title>SERVICES SECTIONS</title>
+        <para>
+            Settings that can be used to configure different services
+            are described in this section. They should reside in the
+            [<replaceable>$NAME</replaceable>] section, for example,
+            for NSS service, the section would be <quote>[nss]</quote>
+        </para>
+
+        <refsect2 id='general'>
+            <title>General service configuration options</title>
+            <para>
+                These options can be used to configure any service.
+            </para>
+            <variablelist>
+                <varlistentry>
+                    <term>debug_level (integer)</term>
+                    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/debug_levels.xml" />
+                </varlistentry>
+                <varlistentry>
+                    <term>debug_timestamps (bool)</term>
+                    <listitem>
+                        <para>
+                            Add a timestamp to the debug messages
+                        </para>
+                        <para>
+                            Default: true
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>debug_microseconds (bool)</term>
+                    <listitem>
+                        <para>
+                            Add microseconds to the timestamp in debug messages
+                        </para>
+                        <para>
+                            Default: false
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>timeout (integer)</term>
+                    <listitem>
+                        <para>
+                            Timeout in seconds between heartbeats for this
+                            service. This is used to ensure that the process
+                            is alive and capable of answering requests.
+                        </para>
+                        <para>
+                            Default: 10
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>reconnection_retries (integer)</term>
+                    <listitem>
+                        <para>
+                            Number of times services should attempt to
+                            reconnect in the event of a Data Provider
+                            crash or restart before they give up
+                        </para>
+                        <para>
+                            Default: 3
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>fd_limit</term>
+                    <listitem>
+                        <para>
+                            This option specifies the maximum number of file
+                            descriptors that may be opened at one time by this
+                            SSSD process. On systems where SSSD is granted the
+                            CAP_SYS_RESOURCE capability, this will be an
+                            absolute setting. On systems without this
+                            capability, the resulting value will be the lower
+                            value of this or the limits.conf "hard" limit.
+                        </para>
+                        <para>
+                            Default: 8192 (or limits.conf "hard" limit)
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>client_idle_timeout</term>
+                    <listitem>
+                        <para>
+                            This option specifies the number of seconds that
+                            a client of an SSSD process can hold onto a file
+                            descriptor without communicating on it. This value
+                            is limited in order to avoid resource exhaustion
+                            on the system.
+                        </para>
+                        <para>
+                            Default: 60
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>force_timeout (integer)</term>
+                    <listitem>
+                        <para>
+                            If a service is not responding to ping checks (see
+                            the <quote>timeout</quote> option), it is first sent
+                            the SIGTERM signal that instructs it to quit gracefully.
+                            If the service does not terminate after <quote>force_timeout</quote>
+                            seconds, the monitor will forcibly shut it down by
+                            sending a SIGKILL signal.
+                        </para>
+                        <para>
+                            Default: 60
+                        </para>
+                    </listitem>
+                </varlistentry>
+            </variablelist>
+        </refsect2>
+
+        <refsect2 id='NSS'>
+            <title>NSS configuration options</title>
+            <para>
+                These options can be used to configure the
+                Name Service Switch (NSS) service.
+            </para>
+            <variablelist>
+                <varlistentry>
+                    <term>enum_cache_timeout (integer)</term>
+                    <listitem>
+                        <para>
+                            How many seconds should nss_sss cache enumerations
+                            (requests for info about all users)
+                        </para>
+                        <para>
+                            Default: 120
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>entry_cache_nowait_percentage (integer)</term>
+                    <listitem>
+                        <para>
+                            The entry cache can be set to automatically update
+                            entries in the background if they are requested
+                            beyond a percentage of the entry_cache_timeout
+                            value for the domain.
+                        </para>
+                        <para>
+                            For example, if the domain's entry_cache_timeout
+                            is set to 30s and entry_cache_nowait_percentage is
+                            set to 50 (percent), entries that come in after 15
+                            seconds past the last cache update will be
+                            returned immediately, but the SSSD will go and
+                            update the cache on its own, so that future
+                            requests will not need to block waiting for a
+                            cache update.
+                        </para>
+                        <para>
+                            Valid values for this option are 0-99 and
+                            represent a percentage of the entry_cache_timeout
+                            for each domain. For performance reasons, this
+                            percentage will never reduce the nowait timeout to
+                            less than 10 seconds.
+                            (0 disables this feature)
+                        </para>
+                        <para>
+                            Default: 50
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>entry_negative_timeout (integer)</term>
+                    <listitem>
+                        <para>
+                            Specifies for how many seconds nss_sss should cache
+                            negative cache hits (that is, queries for
+                            invalid database entries, like nonexistent ones)
+                            before asking the back end again.
+                        </para>
+                        <para>
+                            Default: 15
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>filter_users, filter_groups (string)</term>
+                    <listitem>
+                        <para>
+                            Exclude certain users from being fetched from the sss
+                            NSS database. This is particularly useful for system
+                            accounts. This option can also be set per-domain or
+                            include fully-qualified names to filter only users from
+                            the particular domain.
+                        </para>
+                        <para>
+                            Default: root
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>filter_users_in_groups (bool)</term>
+                    <listitem>
+                        <para>
+                            If you want filtered user still be group members
+                            set this option to false.
+                        </para>
+                        <para>
+                            Default: true
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/override_homedir.xml" />
+                <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/homedir_substring.xml" />
+                <varlistentry>
+                    <term>fallback_homedir (string)</term>
+                    <listitem>
+                        <para>
+                            Set a default template for a user's home directory
+                            if one is not specified explicitly by the domain's
+                            data provider.
+                        </para>
+                        <para>
+                            The available values for this option are the same
+                            as for override_homedir.
+                        </para>
+                        <para>
+                            example:
+                            <programlisting>
+fallback_homedir = /home/%u
+                            </programlisting>
+                        </para>
+                        <para>
+                            Default: not set (no substitution for unset home
+                            directories)
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>override_shell (string)</term>
+                    <listitem>
+                        <para>
+                            Override the login shell for all users. This
+                            option supersedes any other shell options if
+                            it takes effect and can be set either in the
+                            [nss] section or per-domain.
+                        </para>
+                        <para>
+                            Default: not set (SSSD will use the value
+                            retrieved from LDAP)
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>allowed_shells (string)</term>
+                    <listitem>
+                        <para>
+                            Restrict user shell to one of the listed values. The order of evaluation is:
+                        </para>
+                        <para>
+                            1. If the shell is present in
+                            <quote>/etc/shells</quote>, it is used.
+                        </para>
+                        <para>
+                            2. If the shell is in the allowed_shells list but
+                            not in <quote>/etc/shells</quote>, use the
+                            value of the shell_fallback parameter.
+                        </para>
+                        <para>
+                            3. If the shell is not in the allowed_shells list and
+                            not in <quote>/etc/shells</quote>, a nologin shell
+                            is used.
+                        </para>
+                        <para>
+                            An empty string for shell is passed as-is to libc.
+                        </para>
+                        <para>
+                            The <quote>/etc/shells</quote> is only read on SSSD start up, which means that
+                            a restart of the SSSD is required in case a new shell is installed.
+                        </para>
+                        <para>
+                            Default: Not set. The user shell is automatically used.
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>vetoed_shells (string)</term>
+                    <listitem>
+                        <para>
+                            Replace any instance of these shells with the shell_fallback
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>shell_fallback (string)</term>
+                    <listitem>
+                        <para>
+                            The default shell to use if an allowed shell is not
+                            installed on the machine.
+                        </para>
+                        <para>
+                            Default: /bin/sh
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>default_shell</term>
+                    <listitem>
+                        <para>
+                            The default shell to use if the provider does
+                            not return one during lookup. This option can
+                            be specified globally in the [nss] section
+                            or per-domain.
+                        </para>
+                        <para>
+                            Default: not set (Return NULL if no shell is
+                            specified and rely on libc to substitute something
+                            sensible when necessary, usually /bin/sh)
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>get_domains_timeout (int)</term>
+                    <listitem>
+                        <para>
+                            Specifies time in seconds for which the list of
+                            subdomains will be considered valid.
+                        </para>
+                        <para>
+                            Default: 60
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>memcache_timeout (int)</term>
+                    <listitem>
+                        <para>
+                            Specifies time in seconds for which records
+                            in the in-memory cache will be valid
+                        </para>
+                        <para>
+                            Default: 300
+                        </para>
+                    </listitem>
+                </varlistentry>
+            </variablelist>
+        </refsect2>
+        <refsect2 id='PAM'>
+            <title>PAM configuration options</title>
+            <para>
+                These options can be used to configure the
+                Pluggable Authentication Module (PAM) service.
+            </para>
+            <variablelist>
+                <varlistentry>
+                    <term>offline_credentials_expiration (integer)</term>
+                    <listitem>
+                        <para>
+                            If the authentication provider is offline, how
+                            long should we allow cached logins (in days since
+                            the last successful online login).
+                        </para>
+                        <para>
+                            Default: 0 (No limit)
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>offline_failed_login_attempts (integer)</term>
+                    <listitem>
+                        <para>
+                            If the authentication provider is offline, how
+                            many failed login attempts are allowed.
+                        </para>
+                        <para>
+                            Default: 0 (No limit)
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>offline_failed_login_delay (integer)</term>
+                    <listitem>
+                        <para>
+                            The time in minutes which has to pass after
+                            offline_failed_login_attempts has been reached
+                            before a new login attempt is possible.
+                        </para>
+                        <para>
+                            If set to 0 the user cannot authenticate offline if
+                            offline_failed_login_attempts has been reached. Only
+                            a successful online authentication can enable
+                            offline authentication again.
+                        </para>
+                        <para>
+                            Default: 5
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>pam_verbosity (integer)</term>
+                    <listitem>
+                        <para>
+                            Controls what kind of messages are shown to the user
+                            during authentication. The higher the number to more
+                            messages are displayed.
+                        </para>
+                        <para>
+                             Currently sssd supports the following values:
+                        </para>
+                        <para>
+                             <emphasis>0</emphasis>: do not show any message
+                        </para>
+                        <para>
+                             <emphasis>1</emphasis>: show only important
+                             messages
+                        </para>
+                        <para>
+                             <emphasis>2</emphasis>: show informational messages
+                        </para>
+                        <para>
+                             <emphasis>3</emphasis>: show all messages and debug
+                             information
+                        </para>
+                        <para>
+                            Default: 1
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                  <term>pam_id_timeout (integer)</term>
+                  <listitem>
+                    <para>
+                      For any PAM request while SSSD is online, the SSSD will
+                      attempt to immediately update the cached identity
+                      information for the user in order to ensure that
+                      authentication takes place with the latest information.
+                    </para>
+                    <para>
+                      A complete PAM conversation may perform multiple PAM
+                      requests, such as account management and session
+                      opening. This option controls (on a
+                      per-client-application basis) how long (in seconds) we
+                      can cache the identity information to avoid excessive
+                      round-trips to the identity provider.
+                    </para>
+                    <para>
+                      Default: 5
+                    </para>
+                  </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                  <term>pam_pwd_expiration_warning (integer)</term>
+                  <listitem>
+                    <para>
+                      Display a warning N days before the password expires.
+                    </para>
+                    <para>
+                      Please note that the backend server has to provide
+                      information about the expiration time of the password.
+                      If this information is missing, sssd cannot display a
+                      warning.
+                    </para>
+                    <para>
+                      If zero is set, then this filter is not applied,
+                      i.e. if the expiration warning was received from
+                      backend server, it will automatically be displayed.
+                    </para>
+                    <para>
+                      This setting can be overridden by setting
+                      <emphasis>pwd_expiration_warning</emphasis>
+                      for a particular domain.
+                    </para>
+                    <para>
+                      Default: 0
+                    </para>
+                  </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>get_domains_timeout (int)</term>
+                    <listitem>
+                        <para>
+                            Specifies time in seconds for which the list of
+                            subdomains will be considered valid.
+                        </para>
+                        <para>
+                            Default: 60
+                        </para>
+                    </listitem>
+                </varlistentry>
+            </variablelist>
+        </refsect2>
+
+        <refsect2 id='SUDO' condition="with_sudo">
+            <title>SUDO configuration options</title>
+            <para>
+                These options can be used to configure the sudo service.
+                The detailed instructions for configuration of
+                <citerefentry>
+                    <refentrytitle>sudo</refentrytitle>
+                    <manvolnum>8</manvolnum>
+                </citerefentry> to work with
+                <citerefentry>
+                    <refentrytitle>sssd</refentrytitle>
+                    <manvolnum>8</manvolnum>
+                </citerefentry> are in the manual page
+                <citerefentry>
+                    <refentrytitle>sssd-sudo</refentrytitle>
+                    <manvolnum>5</manvolnum>
+                </citerefentry>.
+            </para>
+            <variablelist>
+                <varlistentry>
+                    <term>sudo_timed (bool)</term>
+                    <listitem>
+                        <para>
+                            Whether or not to evaluate the sudoNotBefore
+                            and sudoNotAfter attributes that implement
+                            time-dependent sudoers entries.
+                        </para>
+                        <para>
+                            Default: false
+                        </para>
+                    </listitem>
+                </varlistentry>
+            </variablelist>
+        </refsect2>
+
+        <refsect2 id='AUTOFS' condition="with_autofs">
+            <title>AUTOFS configuration options</title>
+            <para>
+                These options can be used to configure the autofs service.
+            </para>
+            <variablelist>
+                <varlistentry>
+                    <term>autofs_negative_timeout (integer)</term>
+                    <listitem>
+                        <para>
+                            Specifies for how many seconds should the
+                            autofs responder negative cache hits
+                            (that is, queries for invalid map entries,
+                            like nonexistent ones) before asking the back
+                            end again.
+                        </para>
+                        <para>
+                            Default: 15
+                        </para>
+                    </listitem>
+                </varlistentry>
+            </variablelist>
+            <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/autofs_restart.xml" />
+        </refsect2>
+
+        <refsect2 id='SSH' condition="with_ssh">
+            <title>SSH configuration options</title>
+            <para>
+                These options can be used to configure the SSH service.
+            </para>
+            <variablelist>
+                <varlistentry>
+                    <term>ssh_hash_known_hosts (bool)</term>
+                    <listitem>
+                        <para>
+                            Whether or not to hash host names and addresses in
+                            the managed known_hosts file.
+                        </para>
+                        <para>
+                            Default: true
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>ssh_known_hosts_timeout (integer)</term>
+                    <listitem>
+                        <para>
+                            How many seconds to keep a host in the managed
+                            known_hosts file after its host keys were requested.
+                        </para>
+                        <para>
+                            Default: 180
+                        </para>
+                    </listitem>
+                </varlistentry>
+            </variablelist>
+        </refsect2>
+
+        <refsect2 id='PAC_RESPONDER' condition="with_pac_responder">
+            <title>PAC responder configuration options</title>
+            <para>
+                The PAC responder works together with the authorization data
+                plugin for MIT Kerberos sssd_pac_plugin.so and a sub-domain
+                provider. The plugin sends the PAC data during a GSSAPI
+                authentication to the PAC responder. The sub-domain provider
+                collects domain SID and ID ranges of the domain the client is
+                joined to and of remote trusted domains from the local domain
+                controller.  If the PAC is decoded and evaluated some of the
+                following operations are done:
+                <itemizedlist>
+                    <listitem><para>If the remote user does not exist in the
+                    cache, it is created. The uid is determined with the help
+                    of the SID, trusted domains will have UPGs and the gid
+                    will have the same value as the uid. The home directory is
+                    set based on the subdomain_homedir parameter. The shell will
+                    be empty by default, i.e. the system defaults are used, but
+                    can be overwritten with the default_shell parameter.</para>
+                    </listitem>
+                    <listitem><para>If there are SIDs of groups from domains
+                    sssd knows about, the user will be added to those groups.
+                    </para></listitem>
+                </itemizedlist>
+            </para>
+            <para>
+                These options can be used to configure the PAC responder.
+            </para>
+            <variablelist>
+                <varlistentry>
+                    <term>allowed_uids (string)</term>
+                    <listitem>
+                        <para>
+                            Specifies the comma-separated list of UID values or
+                            user names that are allowed to access the PAC
+                            responder. User names are resolved to UIDs at
+                            startup.
+                        </para>
+                        <para>
+                            Default: 0 (only the root user is allowed to access
+                            the PAC responder)
+                        </para>
+                        <para>
+                            Please note that although the UID 0 is used as the
+                            default it will be overwritten with this option. If
+                            you still want to allow the root user to access the
+                            PAC responder, which would be the typical case, you
+                            have to add 0 to the list of allowed UIDs as well.
+                        </para>
+                    </listitem>
+                </varlistentry>
+            </variablelist>
+        </refsect2>
+
+    </refsect1>
+
+    <refsect1 id='domain-sections'>
+        <title>DOMAIN SECTIONS</title>
+        <para>
+            These configuration options can be present in a domain
+            configuration section, that is, in a section called
+            <quote>[domain/<replaceable>NAME</replaceable>]</quote>
+            <variablelist>
+                <varlistentry>
+                    <term>min_id,max_id (integer)</term>
+                    <listitem>
+                        <para>
+                            UID and GID limits for the domain. If a domain
+                            contains an entry that is outside these limits, it
+                            is ignored.
+                        </para>
+                        <para>
+                            For users, this affects the primary GID limit. The
+                            user will not be returned to NSS if either the
+                            UID or the primary GID is outside the range. For
+                            non-primary group memberships, those that are in
+                            range will be reported as expected.
+                        </para>
+                        <para>
+                            These ID limits affect even saving entries to
+                            cache, not only returning them by name or ID.
+                        </para>
+                        <para>
+                            Default: 1 for min_id, 0 (no limit) for max_id
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>enumerate (bool)</term>
+                    <listitem>
+                        <para>
+                            Determines if a domain can be enumerated. This
+                            parameter can have one of the following values:
+                        </para>
+                        <para>
+                            TRUE = Users and groups are enumerated
+                        </para>
+                        <para>
+                            FALSE = No enumerations for this domain
+                        </para>
+                        <para>
+                            Default: FALSE
+                        </para>
+                        <para>
+                            Note: Enabling enumeration has a moderate
+                            performance impact on SSSD while enumeration
+                            is running. It may take up to several minutes
+                            after SSSD startup to fully complete enumerations.
+                            During this time, individual requests for
+                            information will go directly to LDAP, though it
+                            may be slow, due to the heavy enumeration
+                            processing. Saving a large number of entries
+                            to cache after the enumeration completes might
+                            also be CPU intensive as the memberships have
+                            to be recomputed.
+                        </para>
+                        <para>
+                            While the first enumeration is running, requests
+                            for the complete user or group lists may return
+                            no results until it completes.
+                        </para>
+                        <para>
+                            Further, enabling enumeration may increase the time
+                            necessary to detect network disconnection, as
+                            longer timeouts are required to ensure that
+                            enumeration lookups are completed successfully.
+                            For more information, refer to the man pages for
+                            the specific id_provider in use.
+                        </para>
+                        <para>
+                            For the reasons cited above, enabling enumeration
+                            is not recommended, especially in large
+                            environments.
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>subdomain_enumerate (string)</term>
+                    <listitem>
+                        <para>
+                            Whether any of autodetected trusted domains should
+                            be enumerated. The supported values are:
+                            <variablelist>
+                                <varlistentry>
+                                    <term>all</term>
+                                    <listitem><para>All discovered trusted domains will be enumerated</para></listitem>
+                                </varlistentry>
+                                <varlistentry>
+                                    <term>none</term>
+                                    <listitem><para>No discovered trusted domains will be enumerated</para></listitem>
+                                </varlistentry>
+                            </variablelist>
+                            Optionally, a list of one or more domain
+                            names can enable enumeration just for these
+                            trusted domains.
+                        </para>
+                        <para>
+                            Default: none
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>force_timeout (integer)</term>
+                    <listitem>
+                        <para>
+                            If a service is not responding to ping checks (see
+                            the <quote>timeout</quote> option), it is first sent
+                            the SIGTERM signal that instructs it to quit gracefully.
+                            If the service does not terminate after <quote>force_timeout</quote>
+                            seconds, the monitor will forcibly shut it down by
+                            sending a SIGKILL signal.
+                        </para>
+                        <para>
+                            Default: 60
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>entry_cache_timeout (integer)</term>
+                    <listitem>
+                        <para>
+                            How many seconds should nss_sss consider
+                            entries valid before asking the backend again
+                        </para>
+                        <para>
+                            The cache expiration timestamps are stored
+                            as attributes of individual objects in the
+                            cache. Therefore, changing the cache timeout only
+                            has effect for newly added or expired entries.
+                            You should run the
+                            <citerefentry>
+                                <refentrytitle>sss_cache</refentrytitle>
+                                <manvolnum>8</manvolnum>
+                            </citerefentry>
+                            tool in order to force refresh of entries that
+                            have already been cached.
+                        </para>
+                        <para>
+                            Default: 5400
+                        </para>
+                    </listitem>
+                </varlistentry>
+                
+                <varlistentry>
+                    <term>entry_cache_user_timeout (integer)</term>
+                    <listitem>
+                        <para>
+                            How many seconds should nss_sss consider
+                            user entries valid before asking the backend again
+                        </para>
+                        <para>
+                            Default: entry_cache_timeout
+                        </para>
+                    </listitem>
+                </varlistentry>
+                
+                <varlistentry>
+                    <term>entry_cache_group_timeout (integer)</term>
+                    <listitem>
+                        <para>
+                            How many seconds should nss_sss consider
+                            group entries valid before asking the backend again
+                        </para>
+                        <para>
+                            Default: entry_cache_timeout
+                        </para>
+                    </listitem>
+                </varlistentry>
+                
+                <varlistentry>
+                    <term>entry_cache_netgroup_timeout (integer)</term>
+                    <listitem>
+                        <para>
+                            How many seconds should nss_sss consider
+                            netgroup entries valid before asking the backend again
+                        </para>
+                        <para>
+                            Default: entry_cache_timeout
+                        </para>
+                    </listitem>
+                </varlistentry>
+                
+                <varlistentry>
+                    <term>entry_cache_service_timeout (integer)</term>
+                    <listitem>
+                        <para>
+                            How many seconds should nss_sss consider
+                            service entries valid before asking the backend again
+                        </para>
+                        <para>
+                            Default: entry_cache_timeout
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry condition="with_sudo">
+                    <term>entry_cache_sudo_timeout (integer)</term>
+                    <listitem>
+                        <para>
+                            How many seconds should sudo consider
+                            rules valid before asking the backend again
+                        </para>
+                        <para>
+                            Default: entry_cache_timeout
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry condition="with_autofs">
+                    <term>entry_cache_autofs_timeout (integer)</term>
+                    <listitem>
+                        <para>
+                            How many seconds should the autofs service
+                            consider automounter maps valid before asking
+                            the backend again
+                        </para>
+                        <para>
+                            Default: entry_cache_timeout
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>refresh_expired_interval (integer)</term>
+                    <listitem>
+                        <para>
+                            Specifies how many seconds SSSD has to wait before
+                            triggering a background refresh task which will
+                            refresh all expired or nearly expired records.
+                        </para>
+                        <para>
+                            Currently only refreshing expired netgroups is
+                            supported.
+                        </para>
+                        <para>
+                            You can consider setting this value to
+                            3/4 * entry_cache_timeout.
+                        </para>
+                        <para>
+                            Default: 0 (disabled)
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>cache_credentials (bool)</term>
+                    <listitem>
+                        <para>
+                            Determines if user credentials are also cached
+                            in the local LDB cache
+                        </para>
+                        <para>
+                            User credentials are stored in a SHA512 hash, not
+                            in plaintext
+                        </para>
+                        <para>
+                            Default: FALSE
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>account_cache_expiration (integer)</term>
+                    <listitem>
+                        <para>
+                            Number of days entries are left in cache after
+                            last successful login before being removed during
+                            a cleanup of the cache. 0 means keep forever.
+                            The value of this parameter must be greater than or
+                            equal to offline_credentials_expiration.
+                        </para>
+                        <para>
+                            Default: 0 (unlimited)
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                  <term>pwd_expiration_warning (integer)</term>
+                  <listitem>
+                    <para>
+                      Display a warning N days before the password expires.
+                    </para>
+                    <para>
+                        If zero is set, then this filter is not applied,
+                        i.e. if the expiration warning was received from
+                        backend server, it will automatically be displayed.
+                    </para>
+                    <para>
+                      Please note that the backend server has to provide
+                      information about the expiration time of the password.
+                      If this information is missing, sssd cannot display a
+                      warning. Also an auth provider has to be configured for
+                      the backend.
+                    </para>
+                    <para>
+                      Default: 7 (Kerberos), 0 (LDAP)
+                    </para>
+                  </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>id_provider (string)</term>
+                    <listitem>
+                        <para>
+                            The identification provider used for the domain.
+                            Supported ID providers are:
+                        </para>
+                        <para>
+                            <quote>proxy</quote>: Support a legacy NSS provider
+                        </para>
+                        <para>
+                            <quote>local</quote>: SSSD internal provider for
+                            local users
+                        </para>
+                        <para>
+                            <quote>ldap</quote>:  LDAP provider. See
+                            <citerefentry>
+                                <refentrytitle>sssd-ldap</refentrytitle>
+                                <manvolnum>5</manvolnum>
+                            </citerefentry> for more information on
+                            configuring LDAP.
+                        </para>
+                        <para>
+                            <quote>ipa</quote>: FreeIPA and Red Hat Enterprise
+                            Identity Management provider. See
+                            <citerefentry>
+                                <refentrytitle>sssd-ipa</refentrytitle>
+                                <manvolnum>5</manvolnum>
+                            </citerefentry> for more information on
+                            configuring FreeIPA.
+                        </para>
+                        <para>
+                            <quote>ad</quote>: Active Directory provider. See
+                            <citerefentry>
+                                <refentrytitle>sssd-ad</refentrytitle>
+                                <manvolnum>5</manvolnum>
+                            </citerefentry> for more information on
+                            configuring Active Directory.
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>use_fully_qualified_names (bool)</term>
+                    <listitem>
+                        <para>
+                            Use the full name and domain (as formatted by
+                            the domain's full_name_format) as the user's login
+                            name reported to NSS.
+                        </para>
+                        <para>
+                            If set to TRUE, all requests to this domain
+                            must use fully qualified names. For example,
+                            if used in LOCAL domain that contains a "test"
+                            user, <command>getent passwd test</command>
+                            wouldn't find the user while <command>getent
+                            passwd test@LOCAL</command> would.
+                        </para>
+                        <para>
+                            NOTE: This option has no effect on netgroup
+                            lookups due to their tendency to include nested
+                            netgroups without qualified names. For netgroups,
+                            all domains will be searched when an unqualified
+                            name is requested.
+                        </para>
+                        <para>
+                            Default: FALSE
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>ignore_group_members (bool)</term>
+                    <listitem>
+                        <para>
+                            Do not return group members for group lookups.
+                        </para>
+                        <para>
+                            If set to TRUE, the group membership attribute
+                            is not requested from the ldap server, and
+                            group members are not returned when processing
+                            group lookup calls.
+                        </para>
+                        <para>
+                            Default: FALSE
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>auth_provider (string)</term>
+                    <listitem>
+                        <para>
+                            The authentication provider used for the domain.
+                            Supported auth providers are:
+                        </para>
+                        <para>
+                            <quote>ldap</quote> for native LDAP authentication. See
+                            <citerefentry>
+                                <refentrytitle>sssd-ldap</refentrytitle>
+                                <manvolnum>5</manvolnum>
+                            </citerefentry> for more information on configuring LDAP.
+                        </para>
+                        <para>
+                            <quote>krb5</quote> for Kerberos authentication. See
+                            <citerefentry>
+                                <refentrytitle>sssd-krb5</refentrytitle>
+                                <manvolnum>5</manvolnum>
+                            </citerefentry> for more information on configuring Kerberos.
+                        </para>
+                        <para>
+                            <quote>ipa</quote>: FreeIPA and Red Hat Enterprise
+                            Identity Management provider. See
+                            <citerefentry>
+                                <refentrytitle>sssd-ipa</refentrytitle>
+                                <manvolnum>5</manvolnum>
+                            </citerefentry> for more information on
+                            configuring FreeIPA.
+                        </para>
+                        <para>
+                            <quote>ad</quote>: Active Directory provider. See
+                            <citerefentry>
+                                <refentrytitle>sssd-ad</refentrytitle>
+                                <manvolnum>5</manvolnum>
+                            </citerefentry> for more information on
+                            configuring Active Directory.
+                        </para>
+                        <para>
+                            <quote>proxy</quote> for relaying authentication to some other PAM target.
+                        </para>
+                        <para>
+                            <quote>none</quote> disables authentication explicitly.
+                        </para>
+                        <para>
+                            Default: <quote>id_provider</quote> is used if it
+                            is set and can handle authentication requests.
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>access_provider (string)</term>
+                    <listitem>
+                        <para>
+                            The access control provider used for the domain.
+                            There are two built-in access providers (in
+                            addition to any included in installed backends)
+                            Internal special providers are:
+                        </para>
+                        <para>
+                            <quote>permit</quote> always allow access. It's the only permitted access provider for a local domain.
+                        </para>
+                        <para>
+                            <quote>deny</quote> always deny access.
+                        </para>
+                        <para>
+                            <quote>ldap</quote> for native LDAP authentication. See
+                            <citerefentry>
+                                <refentrytitle>sssd-ldap</refentrytitle>
+                                <manvolnum>5</manvolnum>
+                            </citerefentry> for more information on configuring LDAP.
+                        </para>
+                        <para>
+                            <quote>ipa</quote>: FreeIPA and Red Hat Enterprise
+                            Identity Management provider. See
+                            <citerefentry>
+                                <refentrytitle>sssd-ipa</refentrytitle>
+                                <manvolnum>5</manvolnum>
+                            </citerefentry> for more information on
+                            configuring FreeIPA.
+                        </para>
+                        <para>
+                            <quote>ad</quote>: Active Directory provider. See
+                            <citerefentry>
+                                <refentrytitle>sssd-ad</refentrytitle>
+                                <manvolnum>5</manvolnum>
+                            </citerefentry> for more information on
+                            configuring Active Directory.
+                        </para>
+                        <para>
+                            <quote>simple</quote> access control based on access
+                            or deny lists. See <citerefentry>
+                            <refentrytitle>sssd-simple</refentrytitle>
+                            <manvolnum>5</manvolnum></citerefentry> for more
+                            information on configuring the simple access module.
+                        </para>
+                        <para>
+                            Default: <quote>permit</quote>
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>chpass_provider (string)</term>
+                    <listitem>
+                        <para>
+                            The provider which should handle change password
+                            operations for the domain.
+                            Supported change password providers are:
+                        </para>
+                        <para>
+                            <quote>ldap</quote> to change a password stored
+                            in a LDAP server.  See
+                            <citerefentry>
+                                <refentrytitle>sssd-ldap</refentrytitle>
+                                <manvolnum>5</manvolnum>
+                            </citerefentry> for more information on configuring LDAP.
+                        </para>
+                        <para>
+                            <quote>krb5</quote>  to change the Kerberos
+                            password. See
+                            <citerefentry>
+                                <refentrytitle>sssd-krb5</refentrytitle>
+                                <manvolnum>5</manvolnum>
+                            </citerefentry> for more information on configuring Kerberos.
+                        </para>
+                        <para>
+                            <quote>ipa</quote>: FreeIPA and Red Hat Enterprise
+                            Identity Management provider. See
+                            <citerefentry>
+                                <refentrytitle>sssd-ipa</refentrytitle>
+                                <manvolnum>5</manvolnum>
+                            </citerefentry> for more information on
+                            configuring FreeIPA.
+                        </para>
+                        <para>
+                            <quote>ad</quote>: Active Directory provider. See
+                            <citerefentry>
+                                <refentrytitle>sssd-ad</refentrytitle>
+                                <manvolnum>5</manvolnum>
+                            </citerefentry> for more information on
+                            configuring Active Directory.
+                        </para>
+                        <para>
+                            <quote>proxy</quote> for relaying password changes
+                            to some other PAM target.
+                        </para>
+                        <para>
+                            <quote>none</quote> disallows password changes explicitly.
+                        </para>
+                        <para>
+                            Default: <quote>auth_provider</quote> is used if it
+                            is set and can handle change password requests.
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry condition="with_sudo">
+                    <term>sudo_provider (string)</term>
+                    <listitem>
+                        <para>
+                            The SUDO provider used for the domain.
+                            Supported SUDO providers are:
+                        </para>
+                        <para>
+                            <quote>ldap</quote> for rules stored in LDAP. See
+                            <citerefentry>
+                                <refentrytitle>sssd-ldap</refentrytitle>
+                                <manvolnum>5</manvolnum>
+                            </citerefentry> for more information on configuring
+                            LDAP.
+                        </para>
+                        <para>
+                            <quote>ipa</quote> the same as <quote>ldap</quote>
+                            but with IPA default settings.
+                        </para>
+                        <para>
+                            <quote>ad</quote> the same as <quote>ldap</quote>
+                            but with AD default settings.
+                        </para>
+                        <para>
+                            <quote>none</quote> disables SUDO explicitly.
+                        </para>
+                        <para>
+                            Default: The value of <quote>id_provider</quote> is
+                            used if it is set.
+                        </para>
+                        <para>
+                            The detailed instructions for configuration of
+                            sudo_provider are in the manual page
+                            <citerefentry>
+                                <refentrytitle>sssd-sudo</refentrytitle>
+                                <manvolnum>5</manvolnum>
+                            </citerefentry>.
+                             There are many configuration options that can be
+                             used to adjust the behavior. Please refer to
+                             "ldap_sudo_*" in
+                             <citerefentry>
+                                 <refentrytitle>sssd-ldap</refentrytitle>
+                                 <manvolnum>5</manvolnum>
+                             </citerefentry>.
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>selinux_provider (string)</term>
+                    <listitem>
+                        <para>
+                            The provider which should handle loading of selinux
+                            settings. Note that this provider will be called right
+                            after access provider ends.
+                            Supported selinux providers are:
+                        </para>
+                        <para>
+                            <quote>ipa</quote> to load selinux settings
+                            from an IPA server. See
+                            <citerefentry>
+                                <refentrytitle>sssd-ipa</refentrytitle>
+                                <manvolnum>5</manvolnum>
+                            </citerefentry> for more information on configuring IPA.
+                        </para>
+                        <para>
+                            <quote>none</quote> disallows fetching selinux settings explicitly.
+                        </para>
+                        <para>
+                            Default: <quote>id_provider</quote> is used if it
+                            is set and can handle selinux loading requests.
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>subdomains_provider (string)</term>
+                    <listitem>
+                        <para>
+                            The provider which should handle fetching of
+                            subdomains. This value should be always the same as
+                            id_provider.
+                            Supported subdomain providers are:
+                        </para>
+                        <para>
+                            <quote>ipa</quote> to load a list of subdomains
+                            from an IPA server. See
+                            <citerefentry>
+                                <refentrytitle>sssd-ipa</refentrytitle>
+                                <manvolnum>5</manvolnum>
+                            </citerefentry> for more information on configuring
+                            IPA.
+                        </para>
+                        <para>
+                            <quote>none</quote> disallows fetching subdomains
+                            explicitly.
+                        </para>
+                        <para>
+                            Default: The value of <quote>id_provider</quote> is
+                            used if it is set.
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry condition="with_autofs">
+                    <term>autofs_provider (string)</term>
+                    <listitem>
+                        <para>
+                            The autofs provider used for the domain.
+                            Supported autofs providers are:
+                        </para>
+                        <para>
+                            <quote>ldap</quote> to load maps stored in LDAP. See
+                            <citerefentry>
+                                <refentrytitle>sssd-ldap</refentrytitle>
+                                <manvolnum>5</manvolnum>
+                            </citerefentry> for more information on configuring LDAP.
+                        </para>
+                        <para>
+                            <quote>ipa</quote> to load maps stored in an IPA
+                            server. See
+                            <citerefentry>
+                                <refentrytitle>sssd-ipa</refentrytitle>
+                                <manvolnum>5</manvolnum>
+                            </citerefentry> for more information on configuring IPA.
+                        </para>
+                        <para>
+                            <quote>none</quote> disables autofs explicitly.
+                        </para>
+                        <para>
+                            Default: The value of <quote>id_provider</quote> is used if it
+                            is set.
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>hostid_provider (string)</term>
+                    <listitem>
+                        <para>
+                            The provider used for retrieving host identity information.
+                            Supported hostid providers are:
+                        </para>
+                        <para>
+                            <quote>ipa</quote> to load host identity stored in an IPA
+                            server. See
+                            <citerefentry>
+                                <refentrytitle>sssd-ipa</refentrytitle>
+                                <manvolnum>5</manvolnum>
+                            </citerefentry> for more information on configuring IPA.
+                        </para>
+                        <para>
+                            <quote>none</quote> disables hostid explicitly.
+                        </para>
+                        <para>
+                            Default: The value of <quote>id_provider</quote> is used if it
+                            is set.
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>re_expression (string)</term>
+                    <listitem>
+                        <para>
+                            Regular expression for this domain that describes
+                            how to parse the string containing user name and
+                            domain into these components.
+                            The "domain" can match either the SSSD
+                            configuration domain name, or, in the case
+                            of IPA trust subdomains and Active Directory
+                            domains, the flat (NetBIOS) name of the domain.
+                        </para>
+                        <para>
+                            Default for the AD and IPA provider:
+                            <quote>(((?P&lt;domain&gt;[^\\]+)\\(?P&lt;name&gt;.+$))|((?P&lt;name&gt;[^@]+)@(?P&lt;domain&gt;.+$))|(^(?P&lt;name&gt;[^@\\]+)$))</quote>
+                            which allows three different styles for user names:
+                            <itemizedlist>
+                                <listitem>
+                                    <para>username</para>
+                                </listitem>
+                                <listitem>
+                                    <para>username@domain.name</para>
+                                </listitem>
+                                <listitem>
+                                    <para>domain\username</para>
+                                </listitem>
+                            </itemizedlist>
+                            While the first two correspond to the general
+                            default the third one is introduced to allow easy
+                            integration of users from Windows domains.
+                        </para>
+                        <para>
+                            Default: <quote>(?P&lt;name&gt;[^@]+)@?(?P&lt;domain&gt;[^@]*$)</quote>
+                            which translates to "the name is everything up to
+                            the <quote>@</quote> sign, the domain everything
+                            after that"
+                        </para>
+                        <para>
+                            PLEASE NOTE: the support for non-unique named
+                            subpatterns is not available on all platforms
+                            (e.g. RHEL5 and SLES10). Only platforms with
+                            libpcre version 7 or higher can support non-unique
+                            named subpatterns.
+                        </para>
+                        <para>
+                            PLEASE NOTE ALSO: older version of libpcre only
+                            support the Python syntax (?P&lt;name&gt;) to label
+                            subpatterns.
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>full_name_format (string)</term>
+                    <listitem>
+                        <para>
+                            A <citerefentry>
+                                <refentrytitle>printf</refentrytitle>
+                                <manvolnum>3</manvolnum>
+                            </citerefentry>-compatible format that describes how to
+                            compose a fully qualified name from user name
+                            and domain name components.
+                        </para>
+                        <para>
+                            The following expansions are supported:
+                            <variablelist>
+                                <varlistentry>
+                                    <term>%1$s</term>
+                                    <listitem><para>user name</para></listitem>
+                                </varlistentry>
+                                <varlistentry>
+                                    <term>%2$s</term>
+                                    <listitem>
+                                        <para>
+                                            domain name as specified in the
+                                            SSSD config file.
+                                        </para>
+                                    </listitem>
+                                </varlistentry>
+                                <varlistentry>
+                                    <term>%3$s</term>
+                                    <listitem>
+                                        <para>
+                                            domain flat name. Mostly usable
+                                            for Active Directory domains, both
+                                            directly configured or discovered
+                                            via IPA trusts.
+                                        </para>
+                                    </listitem>
+                                </varlistentry>
+                            </variablelist>
+                        </para>
+                        <para>
+                            Default: <quote>%1$s@%2$s</quote>.
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>lookup_family_order (string)</term>
+                    <listitem>
+                        <para>
+                            Provides the ability to select preferred address family
+                            to use when performing DNS lookups.
+                        </para>
+                        <para>
+                            Supported values:
+                        </para>
+                        <para>
+                            ipv4_first: Try looking up IPv4 address, if that fails, try IPv6
+                        </para>
+                        <para>
+                            ipv4_only: Only attempt to resolve hostnames to IPv4 addresses.
+                        </para>
+                        <para>
+                            ipv6_first: Try looking up IPv6 address, if that fails, try IPv4
+                        </para>
+                        <para>
+                            ipv6_only: Only attempt to resolve hostnames to IPv6 addresses.
+                        </para>
+                        <para>
+                            Default: ipv4_first
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>dns_resolver_timeout (integer)</term>
+                    <listitem>
+                        <para>
+                            Defines the amount of time (in seconds) to wait for a reply from
+                            the DNS resolver before assuming that it is unreachable. If this
+                            timeout is reached, the domain will continue to operate in
+                            offline mode.
+                        </para>
+                        <para>
+                            Default: 6
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>dns_discovery_domain (string)</term>
+                    <listitem>
+                        <para>
+                            If service discovery is used in the back end, specifies
+                            the domain part of the service discovery DNS query.
+                        </para>
+                        <para>
+                            Default: Use the domain part of machine's hostname
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>override_gid (integer)</term>
+                    <listitem>
+                        <para>
+                            Override the primary GID value with the one specified.
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>case_sensitive (boolean)</term>
+                    <listitem>
+                        <para>
+                            Treat user and group names as case sensitive. At
+                            the moment, this option is not supported in
+                            the local provider.
+                        </para>
+                        <para>
+                            Default: True
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>proxy_fast_alias (boolean)</term>
+                    <listitem>
+                        <para>
+                            When a user or group is looked up by name in
+                            the proxy provider, a second lookup by ID is
+                            performed to "canonicalize" the name in case
+                            the requested name was an alias. Setting this
+                            option to true would cause the SSSD to perform
+                            the ID lookup from cache for performance reasons.
+                        </para>
+                        <para>
+                            Default: false
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>subdomain_homedir (string)</term>
+                    <listitem>
+                        <para>
+                            Use this homedir as default value for all subdomains
+                            within this domain in IPA AD trust.
+                            See <emphasis>override_homedir</emphasis>
+                            for info about possible values. In addition to those, the
+                            expansion below can only be used with
+                            <emphasis>subdomain_homedir</emphasis>.
+                            <variablelist>
+                                <varlistentry>
+                                    <term>%F</term>
+                                    <listitem><para>flat (NetBIOS) name of a subdomain.</para></listitem>
+                                </varlistentry>
+                            </variablelist>
+                        </para>
+                        <para>
+                            The value can be overridden by
+                            <emphasis>override_homedir</emphasis> option.
+                        </para>
+                        <para>
+                            Default: <filename>/home/%d/%u</filename>
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>realmd_tags (string)</term>
+                    <listitem>
+                        <para>
+                            Various tags stored by the realmd configuration service
+                            for this domain.
+                        </para>
+                    </listitem>
+                </varlistentry>
+            </variablelist>
+        </para>
+
+        <para>
+            Options valid for proxy domains.
+
+            <variablelist>
+                <varlistentry>
+                    <term>proxy_pam_target (string)</term>
+                    <listitem>
+                        <para>
+                            The proxy target PAM proxies to.
+                        </para>
+                        <para>
+                            Default: not set by default, you have to take an
+                            existing pam configuration or create a new one and
+                            add the service name here.
+                        </para>
+                    </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                    <term>proxy_lib_name (string)</term>
+                    <listitem>
+                        <para>
+                            The name of the NSS library to use in proxy
+                            domains. The NSS functions searched for in the
+                            library are in the form of
+                            _nss_$(libName)_$(function), for example
+                            _nss_files_getpwent.
+                        </para>
+                    </listitem>
+                </varlistentry>
+            </variablelist>
+        </para>
+
+        <refsect2 id='local_domain'>
+            <title>The local domain section</title>
+            <para>
+                This section contains settings for domain that stores users and
+                groups in SSSD native database, that is, a domain that uses
+                <replaceable>id_provider=local</replaceable>.
+            </para>
+            <variablelist>
+                <title>Section parameters</title>
+                <varlistentry>
+                    <term>default_shell (string)</term>
+                    <listitem>
+                        <para>
+                            The default shell for users created
+                            with SSSD userspace tools.
+                        </para>
+                        <para>
+                            Default: <filename>/bin/bash</filename>
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>base_directory (string)</term>
+                    <listitem>
+                        <para>
+                            The tools append the login name to
+                            <replaceable>base_directory</replaceable> and
+                            use that as the home directory.
+                        </para>
+                        <para>
+                            Default: <filename>/home</filename>
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>create_homedir (bool)</term>
+                    <listitem>
+                        <para>
+                            Indicate if a home directory should be created by default for new users.
+                            Can be overridden on command line.
+                        </para>
+                        <para>
+                            Default: TRUE
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>remove_homedir (bool)</term>
+                    <listitem>
+                        <para>
+                            Indicate if a home directory should be removed by default for deleted users.
+                            Can be overridden on command line.
+                        </para>
+                        <para>
+                            Default: TRUE
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>homedir_umask (integer)</term>
+                    <listitem>
+                        <para>
+                            Used by
+                            <citerefentry>
+                                <refentrytitle>sss_useradd</refentrytitle>
+                                <manvolnum>8</manvolnum>
+                            </citerefentry> to specify the default permissions on a newly created
+                            home directory.
+                        </para>
+                        <para>
+                            Default: 077
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>skel_dir (string)</term>
+                    <listitem>
+                        <para>
+                            The skeleton directory, which contains files
+                            and directories to be copied in the user's
+                            home directory, when the home directory is
+                            created by
+                            <citerefentry>
+                                <refentrytitle>sss_useradd</refentrytitle>
+                                <manvolnum>8</manvolnum>
+                            </citerefentry>
+                        </para>
+                        <para>
+                            Default: <filename>/etc/skel</filename>
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>mail_dir (string)</term>
+                    <listitem>
+                        <para>
+                            The mail spool directory. This is needed to
+                            manipulate the mailbox when its corresponding
+                            user account is modified or deleted.
+                            If not specified, a default
+                            value is used.
+                        </para>
+                        <para>
+                            Default: <filename>/var/mail</filename>
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>userdel_cmd (string)</term>
+                    <listitem>
+                        <para>
+                            The command that is run after a user is removed.
+                            The command us passed the username of the user being
+                            removed as the first and only parameter. The return
+                            code of the command is not taken into account.
+                        </para>
+                        <para>
+                            Default: None, no command is run
+                        </para>
+                    </listitem>
+                </varlistentry>
+            </variablelist>
+        </refsect2>
+
+    </refsect1>
+
+    <refsect1 id='example'>
+        <title>EXAMPLE</title>
+        <para>
+            The following example shows a typical SSSD config. It does
+            not describe configuration of the domains themselves - refer to
+            documentation on configuring domains for more details.
+<programlisting>
+[sssd]
+domains = LDAP
+services = nss, pam
+config_file_version = 2
+
+[nss]
+filter_groups = root
+filter_users = root
+
+[pam]
+
+[domain/LDAP]
+id_provider = ldap
+ldap_uri = ldap://ldap.example.com
+ldap_search_base = dc=example,dc=com
+
+auth_provider = krb5
+krb5_server = kerberos.example.com
+krb5_realm = EXAMPLE.COM
+cache_credentials = true
+
+min_id = 10000
+max_id = 20000
+enumerate = False
+</programlisting>
+        </para>
+    </refsect1>
+
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/seealso.xml" />
+
+</refentry>
+</reference>

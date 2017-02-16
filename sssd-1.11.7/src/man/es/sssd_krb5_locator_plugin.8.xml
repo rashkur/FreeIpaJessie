@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE reference PUBLIC "-//OASIS//DTD DocBook V4.4//EN"
+"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<reference>
+<title>Páginas de manual de SSSD</title>
+<refentry>
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/upstream.xml" />
+
+    <refmeta>
+        <refentrytitle>sssd_krb5_locator_plugin</refentrytitle>
+        <manvolnum>8</manvolnum>
+    </refmeta>
+
+    <refnamediv id='name'>
+        <refname>sssd_krb5_locator_plugin</refname>
+        <refpurpose>El archivo de configuración de SSSD</refpurpose>
+    </refnamediv>
+
+    <refsect1 id='description'>
+        <title>DESCRIPCION</title>
+        <para>
+            The Kerberos locator plugin <command>sssd_krb5_locator_plugin</command> is
+used by the Kerberos provider of <citerefentry>
+<refentrytitle>sssd</refentrytitle> <manvolnum>8</manvolnum> </citerefentry>
+to tell the Kerberos libraries what Realm and which KDC to use.  Typically
+this is done in <citerefentry> <refentrytitle>krb5.conf</refentrytitle>
+<manvolnum>5</manvolnum> </citerefentry> which is always read by the
+Kerberos libraries. To simplify the configuration the Realm and the KDC can
+be defined in <citerefentry> <refentrytitle>sssd.conf</refentrytitle>
+<manvolnum>5</manvolnum> </citerefentry> as described in <citerefentry>
+<refentrytitle>sssd-krb5</refentrytitle> <manvolnum>5</manvolnum>
+</citerefentry>
+        </para>
+        <para>
+            <citerefentry> <refentrytitle>sssd</refentrytitle> <manvolnum>8</manvolnum>
+</citerefentry> pone el Reino y el nombre o dirección IP del KDC en las
+variables de entorno SSSD_KRB5_REALM y SSSD_KRB5_KDC respectivamente. Cuando
+<command>sssd_krb5_locator_plugin</command> es llamado por las librerías
+kerberos lee y evalúa estas variables y se las devuelve a las librerías.
+        </para>
+    </refsect1>
+
+    <refsect1 id='notes'>
+        <title>NOTAS</title>
+        <para>
+            No todas las implementaciones Kerberos soportan el uso de plugins. Si
+<command>sssd_krb5_locator_plugin</command> no está disponible en su sistema
+usted tiene que editar /etc/krb5.conf para reflejar sus ajustes Kerberos.
+        </para>
+        <para>
+            Si la variable de entorno SSSD_KRB5_LOCATOR_DEBUR está fijada a cualquier
+valor los mensajes de depuración se enviarán a stderr.
+        </para>
+    </refsect1>
+
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/seealso.xml" />
+
+</refentry>
+</reference>

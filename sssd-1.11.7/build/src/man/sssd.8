@@ -1,0 +1,204 @@
+'\" t
+.\"     Title: sssd
+.\"    Author: The SSSD upstream - http://fedorahosted.org/sssd
+.\" Generator: DocBook XSL Stylesheets v1.78.1 <http://docbook.sf.net/>
+.\"      Date: 02/16/2017
+.\"    Manual: SSSD Manual pages
+.\"    Source: SSSD
+.\"  Language: English
+.\"
+.TH "SSSD" "8" "02/16/2017" "SSSD" "SSSD Manual pages"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+sssd \- System Security Services Daemon
+.SH "SYNOPSIS"
+.HP \w'\fBsssd\fR\ 'u
+\fBsssd\fR [\fIoptions\fR]
+.SH "DESCRIPTION"
+.PP
+\fBSSSD\fR
+provides a set of daemons to manage access to remote directories and authentication mechanisms\&. It provides an NSS and PAM interface toward the system and a pluggable backend system to connect to multiple different account sources as well as D\-Bus interface\&. It is also the basis to provide client auditing and policy services for projects like FreeIPA\&. It provides a more robust database to store local users as well as extended user data\&.
+.SH "OPTIONS"
+.PP
+\fB\-d\fR,\fB\-\-debug\-level\fR \fILEVEL\fR
+.RS 4
+SSSD supports two representations for specifying the debug level\&. The simplest is to specify a decimal value from 0\-9, which represents enabling that level and all lower\-level debug messages\&. The more comprehensive option is to specify a hexadecimal bitmask to enable or disable specific levels (such as if you wish to suppress a level)\&.
+.sp
+Currently supported debug levels:
+.sp
+\fI0\fR,
+\fI0x0010\fR: Fatal failures\&. Anything that would prevent SSSD from starting up or causes it to cease running\&.
+.sp
+\fI1\fR,
+\fI0x0020\fR: Critical failures\&. An error that doesn\*(Aqt kill the SSSD, but one that indicates that at least one major feature is not going to work properly\&.
+.sp
+\fI2\fR,
+\fI0x0040\fR: Serious failures\&. An error announcing that a particular request or operation has failed\&.
+.sp
+\fI3\fR,
+\fI0x0080\fR: Minor failures\&. These are the errors that would percolate down to cause the operation failure of 2\&.
+.sp
+\fI4\fR,
+\fI0x0100\fR: Configuration settings\&.
+.sp
+\fI5\fR,
+\fI0x0200\fR: Function data\&.
+.sp
+\fI6\fR,
+\fI0x0400\fR: Trace messages for operation functions\&.
+.sp
+\fI7\fR,
+\fI0x1000\fR: Trace messages for internal control functions\&.
+.sp
+\fI8\fR,
+\fI0x2000\fR: Contents of function\-internal variables that may be interesting\&.
+.sp
+\fI9\fR,
+\fI0x4000\fR: Extremely low\-level tracing information\&.
+.sp
+To log required bitmask debug levels, simply add their numbers together as shown in following examples:
+.sp
+\fIExample\fR: To log fatal failures, critical failures, serious failures and function data use 0x0270\&.
+.sp
+\fIExample\fR: To log fatal failures, configuration settings, function data, trace messages for internal control functions use 0x1310\&.
+.sp
+\fINote\fR: The bitmask format of debug levels was introduced in 1\&.7\&.0\&.
+.sp
+\fIDefault\fR: 0
+.RE
+.PP
+\fB\-\-debug\-timestamps=\fR\fImode\fR
+.RS 4
+\fI1\fR: Add a timestamp to the debug messages
+.sp
+\fI0\fR: Disable timestamp in the debug messages
+.sp
+Default: 1
+.RE
+.PP
+\fB\-\-debug\-microseconds=\fR\fImode\fR
+.RS 4
+\fI1\fR: Add microseconds to the timestamp in debug messages
+.sp
+\fI0\fR: Disable microseconds in timestamp
+.sp
+Default: 0
+.RE
+.PP
+\fB\-f\fR,\fB\-\-debug\-to\-files\fR
+.RS 4
+Send the debug output to files instead of stderr\&. By default, the log files are stored in
+/var/log/sssd
+and there are separate log files for every SSSD service and domain\&.
+.RE
+.PP
+\fB\-D\fR,\fB\-\-daemon\fR
+.RS 4
+Become a daemon after starting up\&.
+.RE
+.PP
+\fB\-i\fR,\fB\-\-interactive\fR
+.RS 4
+Run in the foreground, don\*(Aqt become a daemon\&.
+.RE
+.PP
+\fB\-c\fR,\fB\-\-config\fR
+.RS 4
+Specify a non\-default config file\&. The default is
+/etc/sssd/sssd\&.conf\&. For reference on the config file syntax and options, consult the
+\fBsssd.conf\fR(5)
+manual page\&.
+.RE
+.PP
+\fB\-?\fR,\fB\-\-help\fR
+.RS 4
+Display help message and exit\&.
+.RE
+.PP
+\fB\-\-version\fR
+.RS 4
+Print version number and exit\&.
+.RE
+.SH "SIGNALS"
+.PP
+SIGTERM/SIGINT
+.RS 4
+Informs the SSSD to gracefully terminate all of its child processes and then shut down the monitor\&.
+.RE
+.PP
+SIGHUP
+.RS 4
+Tells the SSSD to stop writing to its current debug file descriptors and to close and reopen them\&. This is meant to facilitate log rolling with programs like logrotate\&.
+.RE
+.PP
+SIGUSR1
+.RS 4
+Tells the SSSD to simulate offline operation for one minute\&. This is mostly useful for testing purposes\&.
+.RE
+.PP
+SIGUSR2
+.RS 4
+Tells the SSSD to go online immediately\&. This is mostly useful for testing purposes\&.
+.RE
+.SH "NOTES"
+.PP
+Environment variable SSS_NSS_USE_MEMCACHE
+.RS 4
+If the environment variable SSS_NSS_USE_MEMCACHE is set to "NO", client applications will not use the fast in\-memory cache\&.
+.RE
+.PP
+Amount of time SSSD spends in offline mode
+.RS 4
+When SSSD switches to offline mode, the amount of time before it tries to go back online will increase based upon the time spent disconnected\&. This value is in seconds and calculated by the following:
+.sp
+60 + random_offset
+.sp
+The random offset can increment up to 30 seconds\&. After each unsuccessful attempt to go online, the new interval is recalculated by the following:
+.sp
+new_interval = old_interval*2 + random_offset
+.sp
+Note that the maximum length of each interval is currently limited to one hour\&. If the calculated length of new_interval is greater than an hour, it will be forced to one hour\&.
+.RE
+.SH "SEE ALSO"
+.PP
+\fBsssd\fR(8),
+\fBsssd.conf\fR(5),
+\fBsssd-ldap\fR(5),
+\fBsssd-krb5\fR(5),
+\fBsssd-simple\fR(5),
+\fBsssd-ipa\fR(5),
+\fBsssd-ad\fR(5),
+\fBsssd-sudo\fR(5),\fBsss_cache\fR(8),
+\fBsss_debuglevel\fR(8),
+\fBsss_groupadd\fR(8),
+\fBsss_groupdel\fR(8),
+\fBsss_groupshow\fR(8),
+\fBsss_groupmod\fR(8),
+\fBsss_useradd\fR(8),
+\fBsss_userdel\fR(8),
+\fBsss_usermod\fR(8),
+\fBsss_obfuscate\fR(8),
+\fBsss_seed\fR(8),
+\fBsssd_krb5_locator_plugin\fR(8),
+\fBsss_ssh_authorizedkeys\fR(8), \fBsss_ssh_knownhostsproxy\fR(8),\fBsssd-ifp\fR(5),\fBpam_sss\fR(8)\&.
+.SH "AUTHORS"
+.PP
+\fBThe SSSD upstream \- http://fedorahosted\&.org/sssd\fR

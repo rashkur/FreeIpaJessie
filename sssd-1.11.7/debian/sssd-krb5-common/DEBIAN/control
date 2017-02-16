@@ -1,0 +1,16 @@
+Package: sssd-krb5-common
+Source: sssd
+Version: 1.11.7-3
+Architecture: amd64
+Maintainer: Debian SSSD Team <pkg-sssd-devel@lists.alioth.debian.org>
+Installed-Size: 301
+Depends: sssd-common (= 1.11.7-3), libc6 (>= 2.14), libcomerr2 (>= 1.01), libdhash1 (>= 0.4.0), libk5crypto3 (>= 1.6.dfsg.2), libkeyutils1 (>= 1.4), libkrb5-3 (>= 1.11+dfsg), libldap-2.4-2 (>= 2.4.7), libpopt0 (>= 1.14), libtalloc2 (>= 2.0.4~git20101213), libtevent0 (>= 0.9.9)
+Recommends: libsasl2-modules-gssapi-mit | libsasl2-modules-gssapi-heimdal
+Breaks: sssd (<< 1.10.0~beta2-1)
+Replaces: sssd (<< 1.10.0~beta2-1)
+Section: utils
+Priority: extra
+Homepage: https://fedorahosted.org/sssd/
+Description: System Security Services Daemon -- Kerberos helpers
+ Provides helper processes that the LDAP and Kerberos back ends can use for
+ Kerberos user or host authentication.

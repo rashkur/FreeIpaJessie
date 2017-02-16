@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE reference PUBLIC "-//OASIS//DTD DocBook V4.4//EN"
+"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<reference>
+<title>Páginas de manual de SSSD</title>
+<refentry>
+    <refentryinfo>
+<productname>SSSD</productname> <orgname>The SSSD upstream -
+http://fedorahosted.org/sssd</orgname></refentryinfo>
+
+    <refmeta>
+        <refentrytitle>pam_sss</refentrytitle>
+        <manvolnum>8</manvolnum>
+    </refmeta>
+
+    <refnamediv id='name'>
+        <refname>pam_sss</refname>
+        <refpurpose>Módulo PAM para SSSD</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv id='synopsis'>
+        <cmdsynopsis>
+<command>pam_sss.so</command> <arg choice='opt'>
+<replaceable>quiet</replaceable> </arg> <arg choice='opt'>
+<replaceable>forward_pass</replaceable> </arg> <arg choice='opt'>
+<replaceable>use_first_pass</replaceable> </arg> <arg choice='opt'>
+<replaceable>use_authtok</replaceable> </arg> <arg choice='opt'>
+<replaceable>retry=N</replaceable> </arg> <arg choice='opt'>
+<replaceable>ignore_unknown_user</replaceable> </arg> <arg choice='opt'>
+<replaceable>ignore_authinfo_unavail</replaceable> </arg></cmdsynopsis>
+    </refsynopsisdiv>
+
+    <refsect1 id='description'>
+        <title>DESCRIPCION</title>
+        <para><command>pam_sss.so</command> es la interfaz PAM para el demonio Servicios
+de Seguridad de Sistema (SSSD). Los errores y resultados son registrados a
+través de <command>syslog(3)</command> con la facilidad LOG_AUTHPRIV.</para>
+    </refsect1>
+
+    <refsect1 id='options'>
+        <title>OPCIONES</title>
+        <variablelist remap='IP'>
+            <varlistentry>
+                <term>
+                    <option>quiet</option>
+                </term>
+                <listitem>
+                    <para>Suprime el registro de mensajes de usuarios desconocidos.</para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>forward_pass</option>
+                </term>
+                <listitem>
+                    <para>Si <option>forward_pass</option> está fijada el password introducido se pone
+en la pila para que lo usen otros módulos PAM.
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>use_first_pass</option>
+                </term>
+                <listitem>
+                    <para>El argumento use_first_pass fuerza al módulo a usar un módulo de password
+apilado previamente y nunca preguntará al usuario - si no hay password
+disponible o el password no es apropiado, se denegará el acceso al usuario.</para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>use_authtok</option>
+                </term>
+                <listitem>
+                    <para>Cuando cambia el password fuerza al módulo a fijar el nuevo password a uno
+suministrado por un módulo de password previamente apilado.</para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>retry=N</option>
+                </term>
+                <listitem>
+                    <para>Si el usuario especificado es preguntado N veces por un password si la
+autenticación falla. Por defecto es 0.</para>
+                    <para>Por favor advierta que esta opción puede no trabajar como se espera llamando
+PAM a manejar el diálogo de usuario por el mismo. Un ejecplo típico es
+<command>sshd</command> con <option>PasswordAuthentication</option>.</para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>ignore_unknown_user</option>
+                </term>
+                <listitem>
+                    <para>If this option is specified and the user does not exist, the PAM module will
+return PAM_IGNORE. This causes the PAM framework to ignore this module.</para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>ignore_authinfo_unavail</option>
+                </term>
+                <listitem>
+                    <para>
+                    Specifies that the PAM module should return PAM_IGNORE if it cannot contact
+the SSSD daemon. This causes the PAM framework to ignore this module.</para>
+                </listitem>
+            </varlistentry>
+        </variablelist>
+    </refsect1>
+
+    <refsect1 id='module_types_provides'>
+        <title>TIPOS DE MÓDULOS SUMINISTRADOS</title>
+        <para>Todos los tipos de módulos (<option>account</option>, <option>auth</option>,
+<option>password</option> y <option>session</option>) son suministrados.
+        </para>
+    </refsect1>
+
+    <refsect1 id='files'>
+        <title>ARCHIVOS</title>
+        <para>Si un password se resetea por un fallo de root, como el correspondiente
+proveedor SSSD no soporta el reseteo de password, se puede mostrar un
+mensaje individual. Este mensaje puede, por ejemplo, contener instrucciones
+sobre como resetear un password.</para>
+
+        <para>El mensaje se lee desde el fichero
+<filename>pam_sss_pw_reset_message.LOC</filename> donde LOC destaca una
+cadena de lugar devuelta por <citerefentry>
+<refentrytitle>setlocale</refentrytitle><manvolnum>3</manvolnum>
+</citerefentry>. Si no hay fichero coincidente se muestra el contenido de
+<filename>pam_sss_pw_reset_message.txt</filename>. Root debe ser el
+propietario de los ficheros y sólo root puede tener permisos de lectura y
+escritura mientras que todos los demás usuarios sólo tienen permisos de
+lectura.</para>
+
+        <para>Estos ficheros son buscados en el directorio
+<filename>/etc/sssd/customize/DOMAIN_NAME/</filename>. Si no hay archivos
+coincidentes se muestra un mensaje genérico.</para>
+    </refsect1>
+
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/seealso.xml" />
+
+</refentry>
+</reference>

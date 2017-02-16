@@ -1,0 +1,15 @@
+Package: libsss-idmap-dev
+Source: sssd
+Version: 1.11.7-3
+Architecture: amd64
+Maintainer: Debian SSSD Team <pkg-sssd-devel@lists.alioth.debian.org>
+Installed-Size: 92
+Depends: libsss-idmap0 (= 1.11.7-3)
+Section: libdevel
+Priority: extra
+Homepage: https://fedorahosted.org/sssd/
+Description: ID mapping library for SSSD -- development files
+ Utility library to convert SIDs to Unix uids and gids.
+ .
+ This package contains header files and symlinks to develop programs which will
+ use the libsss-idmap library.

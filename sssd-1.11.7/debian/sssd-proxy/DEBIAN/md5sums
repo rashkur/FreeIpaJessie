@@ -1,0 +1,4 @@
+1e44c98be2e2202e85ba555ce7839220  usr/lib/x86_64-linux-gnu/sssd/libsss_proxy.so
+f530fa88a64f642959826060787c3123  usr/lib/x86_64-linux-gnu/sssd/proxy_child
+33be9ae4ebbd14406771d7d5dc552c46  usr/share/doc/sssd-proxy/changelog.Debian.gz
+13a01f8bcb4a56e1df65e43e01444c07  usr/share/doc/sssd-proxy/copyright

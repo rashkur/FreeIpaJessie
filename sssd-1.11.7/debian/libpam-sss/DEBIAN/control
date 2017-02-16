@@ -1,0 +1,20 @@
+Package: libpam-sss
+Source: sssd
+Version: 1.11.7-3
+Architecture: amd64
+Maintainer: Debian SSSD Team <pkg-sssd-devel@lists.alioth.debian.org>
+Installed-Size: 100
+Depends: libpam-pwquality (>= 1.2.2-1), libpam-runtime (>= 1.0.1-6), libc6 (>= 2.14), libpam0g (>= 0.99.7.1)
+Recommends: sssd
+Section: utils
+Priority: extra
+Multi-Arch: same
+Homepage: https://fedorahosted.org/sssd/
+Description: Pam module for the System Security Services Daemon
+ Provides a set of daemons to manage access to remote directories and
+ authentication mechanisms. It provides an NSS and PAM interface toward
+ the system and a pluggable backend system to connect to multiple different
+ account sources. It is also the basis to provide client auditing and policy
+ services for projects like FreeIPA.
+ .
+ This package provide the pam module to connect to the sssd daemon.

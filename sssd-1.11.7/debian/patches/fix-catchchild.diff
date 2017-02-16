@@ -1,0 +1,33 @@
+--- a/src/util/signal.c
++++ b/src/util/signal.c
+@@ -131,7 +131,7 @@ void (*CatchSignal(int signum,void (*han
+  Ignore SIGCLD via whatever means is necessary for this OS.
+ **/
+ 
+-void CatchChild(void)
++void (*CatchChild(void))(int)
+ {
+ 	CatchSignal(SIGCLD, sig_cld);
+ }
+@@ -140,7 +140,7 @@ void CatchChild(void)
+  Catch SIGCLD but leave the child around so it's status can be reaped.
+ **/
+ 
+-void CatchChildLeaveStatus(void)
++void (*CatchChildLeaveStatus(void))(int)
+ {
+ 	CatchSignal(SIGCLD, sig_cld_leave_status);
+ }
+--- a/src/util/util.h
++++ b/src/util/util.h
+@@ -227,8 +227,8 @@ void sig_term(int sig);
+ #include <signal.h>
+ void BlockSignals(bool block, int signum);
+ void (*CatchSignal(int signum,void (*handler)(int )))(int);
+-void CatchChild(void);
+-void CatchChildLeaveStatus(void);
++void (*CatchChild(void))(int);
++void (*CatchChildLeaveStatus(void))(int);
+ 
+ /* from memory.c */
+ typedef int (void_destructor_fn_t)(void *);

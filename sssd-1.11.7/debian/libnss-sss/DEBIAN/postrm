@@ -1,0 +1,45 @@
+#!/bin/sh
+set -e
+
+# Automatically added by dh_makeshlibs
+if [ "$1" = "remove" ]; then
+	ldconfig
+fi
+# End automatically added section
+
+
+# This code was taken from libnss-myhostname, which got it from nss-mdns:
+
+log() {
+    echo "$*"
+}
+
+remove_nss_entry() {
+    log "Checking NSS setup..."
+    # abort if /etc/nsswitch.conf does not exist
+    if ! [ -e /etc/nsswitch.conf ]; then
+        log "Could not find /etc/nsswitch.conf."
+        return
+    fi
+    sed -i --regexp-extended '
+      /^(passwd|group|shadow|netgroup|services):/ {
+        s/\bsss\b//g
+        s/[[:space:]]+$//
+      }
+    ' /etc/nsswitch.conf
+}
+
+case "$1" in
+    remove|purge)
+        if [ "${DPKG_MAINTSCRIPT_PACKAGE_REFCOUNT:-1}" = 1 ]; then
+            remove_nss_entry
+        fi
+    ;;
+    upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
+    ;;
+
+    *)
+        echo "postrm called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac

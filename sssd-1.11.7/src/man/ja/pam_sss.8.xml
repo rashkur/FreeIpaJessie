@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE reference PUBLIC "-//OASIS//DTD DocBook V4.4//EN"
+"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<reference>
+<title>SSSD マニュアル ページ</title>
+<refentry>
+    <refentryinfo>
+<productname>SSSD</productname> <orgname>The SSSD upstream -
+http://fedorahosted.org/sssd</orgname></refentryinfo>
+
+    <refmeta>
+        <refentrytitle>pam_sss</refentrytitle>
+        <manvolnum>8</manvolnum>
+    </refmeta>
+
+    <refnamediv id='name'>
+        <refname>pam_sss</refname>
+        <refpurpose>SSSD の PAM モジュール</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv id='synopsis'>
+        <cmdsynopsis>
+<command>pam_sss.so</command> <arg choice='opt'>
+<replaceable>quiet</replaceable> </arg> <arg choice='opt'>
+<replaceable>forward_pass</replaceable> </arg> <arg choice='opt'>
+<replaceable>use_first_pass</replaceable> </arg> <arg choice='opt'>
+<replaceable>use_authtok</replaceable> </arg> <arg choice='opt'>
+<replaceable>retry=N</replaceable> </arg> <arg choice='opt'>
+<replaceable>ignore_unknown_user</replaceable> </arg> <arg choice='opt'>
+<replaceable>ignore_authinfo_unavail</replaceable> </arg></cmdsynopsis>
+    </refsynopsisdiv>
+
+    <refsect1 id='description'>
+        <title>概要</title>
+        <para><command>pam_sss.so</command> は System Security Services daemon (SSSD) への
+PAM インターフェースです。エラーと結果は <command>syslog(3)</command> を通して LOG_AUTHPRIV
+ファシリティでログ記録されます。</para>
+    </refsect1>
+
+    <refsect1 id='options'>
+        <title>オプション</title>
+        <variablelist remap='IP'>
+            <varlistentry>
+                <term>
+                    <option>quiet</option>
+                </term>
+                <listitem>
+                    <para>不明なユーザーのログメッセージを抑制します。</para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>forward_pass</option>
+                </term>
+                <listitem>
+                    <para><option>forward_pass</option> が設定されていると、他の PAM
+モジュールが使用するために、入力されたパスワードがスタックに置かれます。
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>use_first_pass</option>
+                </term>
+                <listitem>
+                    <para>引数 use_first_pass
+は強制的にモジュールが前にスタックされたモジュールのパスワードを使用して、ユーザーに入力させません。パスワードが何も利用可能ではない、またはパスワードが適切でなければ、ユーザーがアクセスを拒否されます。</para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>use_authtok</option>
+                </term>
+                <listitem>
+                    <para>パスワードを変更するとき、モジュールが強制的に新しいパスワードを、前にスタックされたパスワードモジュールに設定します。</para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>retry=N</option>
+                </term>
+                <listitem>
+                    <para>指定されていると、認証に失敗した場合にパスワードをあと N 回ユーザーに問い合わせます。初期値は 0 です。</para>
+                    <para>このオプションは、アプリケーションが呼び出す PAM が自身においてユーザーダイアログを処理すると仮定して動作しません。典型的な例は
+<option>PasswordAuthentication</option> を用いた <command>sshd</command> です。</para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>ignore_unknown_user</option>
+                </term>
+                <listitem>
+                    <para>If this option is specified and the user does not exist, the PAM module will
+return PAM_IGNORE. This causes the PAM framework to ignore this module.</para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <option>ignore_authinfo_unavail</option>
+                </term>
+                <listitem>
+                    <para>
+                    Specifies that the PAM module should return PAM_IGNORE if it cannot contact
+the SSSD daemon. This causes the PAM framework to ignore this module.</para>
+                </listitem>
+            </varlistentry>
+        </variablelist>
+    </refsect1>
+
+    <refsect1 id='module_types_provides'>
+        <title>提供されるモジュール形式</title>
+        <para>すべてのモジュール形式 (<option>account</option>, <option>auth</option>,
+<option>password</option> および <option>session</option>) が提供されます。
+        </para>
+    </refsect1>
+
+    <refsect1 id='files'>
+        <title>ファイル</title>
+        <para>対応する SSSD プロバイダーがパスワードリセットをサポートしないため、root
+によるパスワードリセットが失敗すると、それぞれのメッセージが表示されます。たとえば、このメッセージはパスワードをリセットする方法に関する説明があります。</para>
+
+        <para>The message is read from the file
+<filename>pam_sss_pw_reset_message.LOC</filename> where LOC stands for a
+locale string returned by <citerefentry>
+<refentrytitle>setlocale</refentrytitle><manvolnum>3</manvolnum>
+</citerefentry>. If there is no matching file the content of
+<filename>pam_sss_pw_reset_message.txt</filename> is displayed. Root must be
+the owner of the files and only root may have read and write permissions
+while all other users must have only read permissions.</para>
+
+        <para>これらのファイルがディレクトリー <filename>/etc/sssd/customize/DOMAIN_NAME/</filename>
+において検索されます。一致するファイルがなければ、一般的なメッセージが表示されます。</para>
+    </refsect1>
+
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/seealso.xml" />
+
+</refentry>
+</reference>

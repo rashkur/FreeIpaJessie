@@ -1,0 +1,25 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+ "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+    <interface name="org.freedesktop.sssd.infopipe">
+        <annotation value="infopipe_iface" name="org.freedesktop.DBus.GLib.CSymbol"/>
+
+        <method name="Ping">
+            <!-- manual argument parsing, raw handler -->
+            <annotation name="org.freedesktop.sssd.RawHandler" value="true"/>
+        </method>
+
+        <method name="GetUserAttr">
+            <arg name="user" type="s" direction="in" />
+            <arg name="attr" type="as" direction="in" />
+            <arg name="values" type="a{sv}" direction="out"/>
+            <annotation name="org.freedesktop.sssd.RawHandler" value="true"/>
+        </method>
+
+        <method name="GetUserGroups">
+            <arg name="user" type="s" direction="in" />
+            <arg name="values" type="as" direction="out"/>
+        </method>
+
+    </interface>
+</node>

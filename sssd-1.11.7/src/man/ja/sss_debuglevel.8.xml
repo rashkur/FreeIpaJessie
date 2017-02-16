@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE reference PUBLIC "-//OASIS//DTD DocBook V4.4//EN"
+"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<reference>
+<title>SSSD マニュアル ページ</title>
+<refentry>
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/upstream.xml" />
+
+    <refmeta>
+        <refentrytitle>sss_debuglevel</refentrytitle>
+        <manvolnum>8</manvolnum>
+    </refmeta>
+
+    <refnamediv id='name'>
+        <refname>sss_debuglevel</refname>
+        <refpurpose>SSSD が実行中にデバッグレベルを変更する</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv id='synopsis'>
+        <cmdsynopsis>
+<command>sss_debuglevel</command> <arg choice='opt'>
+<replaceable>options</replaceable> </arg> <arg
+choice='plain'><replaceable>NEW_DEBUG_LEVEL</replaceable></arg></cmdsynopsis>
+    </refsynopsisdiv>
+
+    <refsect1 id='description'>
+        <title>概要</title>
+        <para>
+            <command>sss_debuglevel</command> は SSSD が実行中に SSSD モニターとプロバイダーのデバッグレベルを
+<replaceable>NEW_DEBUG_LEVEL</replaceable> に変更します。
+        </para>
+    </refsect1>
+
+    <refsect1 id='options'>
+        <title>オプション</title>
+        <variablelist remap='IP'>
+            <varlistentry>
+                <term>
+                    <option>-c</option>,<option>--config</option>
+                </term>
+                <listitem>
+                    <para>
+                        非標準の設定ファイルを指定します。初期値は <filename>/etc/sssd/sssd.conf</filename>
+です。設定ファイルの構文とオプションは <citerefentry> <refentrytitle>sssd.conf</refentrytitle>
+<manvolnum>5</manvolnum> </citerefentry> マニュアルページを参照してください。
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>
+                    <replaceable>NEW_DEBUG_LEVEL</replaceable>
+                </term>
+                <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/debug_levels.xml" />
+            </varlistentry>
+        </variablelist>
+    </refsect1>
+
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="include/seealso.xml" />
+
+</refentry>
+</reference>

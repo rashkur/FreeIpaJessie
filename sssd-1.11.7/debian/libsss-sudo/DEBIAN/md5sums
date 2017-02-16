@@ -1,0 +1,4 @@
+19f3a2438158fa6645d1170ebe3ed6a1  usr/lib/x86_64-linux-gnu/libsss_sudo.so
+33be9ae4ebbd14406771d7d5dc552c46  usr/share/doc/libsss-sudo/changelog.Debian.gz
+13a01f8bcb4a56e1df65e43e01444c07  usr/share/doc/libsss-sudo/copyright
+8947faa00b88df40bfaa73263cefa839  usr/share/lintian/overrides/libsss-sudo

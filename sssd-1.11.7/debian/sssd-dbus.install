@@ -1,0 +1,4 @@
+etc/dbus-1/system.d/org.freedesktop.sssd.infopipe.conf
+usr/lib/*/sssd/sssd_ifp
+usr/share/dbus-1/system-services/org.freedesktop.sssd.infopipe.service
+usr/share/man/man5/sssd-ifp.5

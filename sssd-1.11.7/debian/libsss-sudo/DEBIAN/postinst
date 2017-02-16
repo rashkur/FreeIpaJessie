@@ -1,0 +1,53 @@
+#!/bin/sh
+
+set -e
+
+case "$1" in
+    configure)
+        ldconfig
+    ;;
+
+    abort-upgrade|abort-remove|abort-deconfigure)
+    ;;
+
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac
+
+
+
+# This code was taken from libnss-myhostname, which got it from nss-mdns:
+
+log() {
+    echo "$*"
+}
+
+# try to insert sss entries to the sudoers line in /etc/nsswitch.conf to
+# automatically enable libsss-sudo support; do not change the configuration
+# if the lines already references some sss lookups
+insert_nss_entry() {
+    log "Checking NSS setup..."
+    # abort if /etc/nsswitch.conf does not exist
+    if ! [ -e /etc/nsswitch.conf ]; then
+        log "Could not find /etc/nsswitch.conf."
+        return
+    fi
+
+    if grep -q ^sudoers /etc/nsswitch.conf; then
+        # append 'sss' to the end of the line if it's not found already
+        sed -i --regexp-extended '
+          /^(sudoers):/ {
+            /\bsss\b/! s/$/ sss/
+          }
+        ' /etc/nsswitch.conf
+    else
+        echo "sudoers:        files sss" >> /etc/nsswitch.conf
+    fi
+}
+
+insert_nss_entry
+
+
+exit 0
